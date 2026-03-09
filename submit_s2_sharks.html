@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shark Vote | Communication S2</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a12; --surface: #13131f; --border: #2a2a3e; --text: #e8e8f0;
+    --muted: #6b6b8a; --accent: #ff6b35; --red: #ff4757; --green: #2ed573; --gold: #ffd32a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-top: 4px solid var(--red); max-width: 480px; width: 100%; padding: 32px 28px; }
+  .badge { background: var(--red); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; padding: 3px 12px; display: inline-block; margin-bottom: 14px; font-weight: 700; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 2px; line-height: 0.95; margin-bottom: 6px; }
+  h1 span { color: var(--red); }
+  .sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
+  .field { margin-bottom: 20px; }
+  label { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  input[type="text"] { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; padding: 10px 14px; outline: none; transition: border-color 0.2s; }
+  input[type="text"]:focus { border-color: var(--red); }
+
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* invest buttons */
+  .invest-row { margin-bottom: 20px; }
+  .invest-row label { margin-bottom: 10px; }
+  .invest-btns { display: flex; gap: 8px; }
+  .invest-btn { flex: 1; padding: 14px 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 2px; cursor: pointer; transition: all 0.15s; font-weight: 700; }
+  .invest-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .invest-btn.selected-yes { background: rgba(46,213,115,0.15); border-color: var(--green); color: var(--green); }
+  .invest-btn.selected-no { background: rgba(255,71,87,0.12); border-color: var(--red); color: var(--red); }
+  .invest-btn.selected-maybe { background: rgba(255,211,42,0.1); border-color: var(--gold); color: var(--gold); }
+
+  /* amount */
+  .amount-row { margin-bottom: 20px; }
+  .amount-display { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--green); text-align: center; margin-bottom: 8px; }
+  input[type="range"] { width: 100%; accent-color: var(--green); cursor: pointer; }
+  .amount-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; }
+
+  .submit-btn { width: 100%; background: var(--red); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; letter-spacing: 3px; padding: 14px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; }
+  .submit-btn:hover { opacity: 0.85; }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .error-msg { display: none; color: var(--red); font-size: 13px; margin-bottom: 10px; }
+
+  .success { display: none; text-align: center; padding: 32px 0; }
+  .success-icon { font-size: 52px; margin-bottom: 14px; }
+  .success h2 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 2px; color: var(--red); margin-bottom: 8px; }
+  .success p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  .again-btn { margin-top: 20px; background: var(--border); color: var(--text); border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 2px; padding: 10px 24px; cursor: pointer; }
+  .again-btn:hover { background: var(--surface); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">SESSION 2 — SHARK VOTE</div>
+  <h1>CAST YOUR<br><span>VOTE.</span></h1>
+  <div class="sub">Rate the group that's pitching right now. You have €500K. Use it wisely.</div>
+
+  <div id="form-section">
+    <div class="field">
+      <label>Your name *</label>
+      <input type="text" id="f-name" placeholder="Sofia Rossi" />
+    </div>
+
+    <div class="field">
+      <label>Group pitching now *</label>
+      <input type="text" id="f-group" placeholder="e.g. GreenBite / Group 3" />
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="invest-row">
+      <label>Would you invest? *</label>
+      <div class="invest-btns">
+        <button class="invest-btn" onclick="setInvest(this,'YES')">✓ YES</button>
+        <button class="invest-btn" onclick="setInvest(this,'NO')">✗ NO</button>
+        <button class="invest-btn" onclick="setInvest(this,'MAYBE')">? MAYBE</button>
+      </div>
+    </div>
+
+    <div class="amount-row" id="amount-section" style="display:none;">
+      <label>How much of your €500K?</label>
+      <div class="amount-display" id="amount-display">€250,000</div>
+      <input type="range" id="f-amount" min="0" max="500" step="25" value="250"
+        oninput="updateAmount(this.value)" />
+      <div class="amount-labels"><span>€0</span><span>€500K</span></div>
+    </div>
+
+    <div class="error-msg" id="err-msg">Please fill in your name, the group, and your investment decision.</div>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">SUBMIT VOTE →</button>
+  </div>
+
+  <div class="success" id="success-section">
+    <div class="success-icon">🦈</div>
+    <h2>VOTED.</h2>
+    <p id="success-msg">Your vote is live on the screen.</p>
+    <button class="again-btn" onclick="resetForm()">RATE ANOTHER GROUP</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+  firebase.initializeApp(window.firebaseConfig);
+  const db = firebase.database();
+
+  let investDecision = '';
+
+  function setInvest(btn, val) {
+    investDecision = val;
+    document.querySelectorAll('.invest-btn').forEach(b => b.className = 'invest-btn');
+    btn.classList.add('selected-' + val.toLowerCase());
+    document.getElementById('amount-section').style.display = (val === 'YES' || val === 'MAYBE') ? 'block' : 'none';
+  }
+
+  function updateAmount(val) {
+    const k = parseInt(val);
+    document.getElementById('amount-display').textContent = '€' + (k * 1000).toLocaleString();
+  }
+
+  function submitForm() {
+    const name = document.getElementById('f-name').value.trim();
+    const group = document.getElementById('f-group').value.trim();
+    if (!name || !group || !investDecision) {
+      document.getElementById('err-msg').style.display = 'block';
+      return;
+    }
+    document.getElementById('err-msg').style.display = 'none';
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('submit-btn').textContent = 'SUBMITTING...';
+
+    const amountK = parseInt(document.getElementById('f-amount').value) || 0;
+    const amount = (investDecision === 'YES' || investDecision === 'MAYBE') ? amountK * 1000 : 0;
+
+    db.ref('communication-s2-sharks/' + Date.now()).set({
+      name,
+      group,
+      invest: investDecision,
+      amount,
+      timestamp: new Date().toISOString()
+    }).then(() => {
+      const amtStr = amount > 0 ? ' — €' + amount.toLocaleString() : '';
+      document.getElementById('success-msg').textContent =
+        investDecision === 'YES' ? `You invested${amtStr} in ${group}. Live on screen.` :
+        investDecision === 'MAYBE' ? `You might invest${amtStr} in ${group}. Live on screen.` :
+        `You passed on ${group}. Live on screen.`;
+      document.getElementById('form-section').style.display = 'none';
+      document.getElementById('success-section').style.display = 'block';
+    }).catch(err => {
+      document.getElementById('submit-btn').disabled = false;
+      document.getElementById('submit-btn').textContent = 'SUBMIT VOTE →';
+      document.getElementById('err-msg').textContent = 'Error: ' + err.message;
+      document.getElementById('err-msg').style.display = 'block';
+    });
+  }
+
+  function resetForm() {
+    investDecision = '';
+    document.getElementById('f-group').value = '';
+    document.getElementById('f-amount').value = 250;
+    document.getElementById('amount-display').textContent = '€250,000';
+    document.querySelectorAll('.invest-btn').forEach(b => b.className = 'invest-btn');
+    document.getElementById('amount-section').style.display = 'none';
+    document.getElementById('err-msg').style.display = 'none';
+    document.getElementById('submit-btn').disabled = false;
+    document.getElementById('submit-btn').textContent = 'SUBMIT VOTE →';
+    document.getElementById('form-section').style.display = 'block';
+    document.getElementById('success-section').style.display = 'none';
+  }
+</script>
+</body>
+</html>

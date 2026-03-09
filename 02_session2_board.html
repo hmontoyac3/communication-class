@@ -183,17 +183,18 @@
   .qr-placeholder .qr-icon { font-size: 48px; opacity: 0.3; }
 
   /* ── SHARKS ── */
-  .sharks-screen { justify-content: center; align-items: center; padding: 40px; }
-  .sharks-inner { max-width: 900px; width: 100%; }
-  .sharks-title { font-family: 'Bebas Neue', sans-serif; font-size: 80px; letter-spacing: 2px; line-height: 0.9; margin-bottom: 8px; }
+  .sharks-screen { padding: 0; overflow: hidden; }
+  .sharks-layout { display: grid; grid-template-columns: 1fr 360px; flex: 1; min-height: 0; }
+  .sharks-main { padding: 32px 36px; overflow-y: auto; }
+  .sharks-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 2px; line-height: 0.9; margin-bottom: 6px; }
   .sharks-title span { color: var(--red); }
-  .sharks-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
-  .current-group-box { background: rgba(255,71,87,0.07); border: 2px solid var(--red); padding: 20px 28px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+  .sharks-sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+  .current-group-box { background: rgba(255,71,87,0.07); border: 2px solid var(--red); padding: 20px 28px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
   .current-group-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
   .current-group-name { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--text); }
   .pitch-timer-display { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--red); line-height: 1; text-align: right; }
   .pitch-timer-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--red); text-align: right; margin-bottom: 4px; }
-  .sharks-controls { display: flex; gap: 10px; margin-bottom: 24px; }
+  .sharks-controls { display: flex; gap: 10px; margin-bottom: 20px; }
   .shark-btn { background: var(--red); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 2px; padding: 12px 24px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; }
   .shark-btn:hover { opacity: 0.8; }
   .shark-btn.secondary { background: var(--border); color: var(--muted); }
@@ -206,6 +207,26 @@
   .rule-card { background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; }
   .rule-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
   .rule-card p { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+  /* ── SHARK LIVE PANEL ── */
+  .shark-live { background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .shark-live-header { padding: 16px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .shark-live-title { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+  .shark-live-count { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--red); line-height: 1; }
+  .shark-live-count span { font-size: 14px; color: var(--muted); font-family: 'Barlow', sans-serif; }
+  .shark-qr { padding: 16px 20px; border-bottom: 1px solid var(--border); text-align: center; flex-shrink: 0; }
+  .shark-qr img { width: 120px; height: 120px; display: block; margin: 0 auto 6px; }
+  .shark-qr-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+  .shark-groups { flex: 1; overflow-y: auto; padding: 12px; }
+  .shark-group-row { background: var(--bg); border: 1px solid var(--border); padding: 10px 14px; margin-bottom: 8px; }
+  .shark-group-name { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; color: var(--text); }
+  .shark-tally { display: flex; gap: 6px; align-items: center; }
+  .tally-chip { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 1px; padding: 3px 10px; font-weight: 700; }
+  .tally-yes { background: rgba(46,213,115,0.15); color: var(--green); }
+  .tally-no { background: rgba(255,71,87,0.12); color: var(--red); }
+  .tally-maybe { background: rgba(255,211,42,0.1); color: var(--gold); }
+  .tally-amount { font-size: 11px; color: var(--muted); font-family: 'Barlow', sans-serif; margin-left: auto; }
+  .shark-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 24px; line-height: 1.6; }
 
   /* ── DEBRIEF ── */
   .debrief-screen { justify-content: center; align-items: center; padding: 40px; }
@@ -235,14 +256,14 @@
     <div class="session-title">BUILD YOUR PITCH — 16:30–18:00</div>
   </div>
   <div class="topbar-right">
-    <button class="nav-btn active" onclick="show('intro')">Intro</button>
-    <button class="nav-btn" onclick="show('jobs')">Jobs Clip</button>
-    <button class="nav-btn" onclick="show('theory')">Theory</button>
-    <button class="nav-btn" onclick="show('aiplan')">AI Plan</button>
-    <button class="nav-btn" onclick="show('lovable')">Lovable</button>
-    <button class="nav-btn" onclick="show('practice')">Practice</button>
-    <button class="nav-btn" onclick="show('sharks')">Sharks</button>
-    <button class="nav-btn" onclick="show('debrief')">Debrief</button>
+    <button class="nav-btn active" onclick="show('intro',this)">Intro</button>
+    <button class="nav-btn" onclick="show('jobs',this)">Jobs Clip</button>
+    <button class="nav-btn" onclick="show('theory',this)">Theory</button>
+    <button class="nav-btn" onclick="show('aiplan',this)">AI Plan</button>
+    <button class="nav-btn" onclick="show('lovable',this)">Lovable</button>
+    <button class="nav-btn" onclick="show('practice',this)">Practice</button>
+    <button class="nav-btn" onclick="show('sharks',this)">Sharks</button>
+    <button class="nav-btn" onclick="show('debrief',this)">Debrief</button>
   </div>
 </div>
 
@@ -347,9 +368,9 @@
     <div class="theory-tag">Communication · Session 2</div>
     <div class="theory-title">WHAT MAKES A <span>PITCH</span></div>
     <div class="theory-tabs">
-      <button class="theory-tab active" onclick="showTab('pitch')">Pitch Structure</button>
-      <button class="theory-tab" onclick="showTab('cuddy')">Warm vs Competent</button>
-      <button class="theory-tab" onclick="showTab('nv')">Non-Verbal</button>
+      <button class="theory-tab active" onclick="showTab('pitch',this)">Pitch Structure</button>
+      <button class="theory-tab" onclick="showTab('cuddy',this)">Warm vs Competent</button>
+      <button class="theory-tab" onclick="showTab('nv',this)">Non-Verbal</button>
     </div>
 
     <div class="theory-panel active" id="tab-pitch">
@@ -593,49 +614,67 @@ Style: dark background (#0a0a12), accent color [PICK ONE HEX], bold sans-serif f
 
 <!-- SHARKS -->
 <div class="screen sharks-screen" id="screen-sharks">
-  <div class="sharks-inner">
-    <div class="sharks-title">SHARK<br><span>TANK.</span></div>
-    <div class="sharks-sub">Groups pitch. Class votes with their money. 3 minutes each. No mercy.</div>
+  <div class="sharks-layout">
+    <!-- LEFT: controls -->
+    <div class="sharks-main">
+      <div class="sharks-title">SHARK<br><span>TANK.</span></div>
+      <div class="sharks-sub">Groups pitch. Class votes with their money. 3 minutes each. No mercy.</div>
 
-    <div class="current-group-box">
-      <div>
-        <div class="current-group-label">Now Pitching</div>
-        <div class="current-group-name" id="current-group-display">Group 1</div>
-        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
-          <div class="group-input-wrap" style="margin-bottom:0;">
-            <input class="group-input" id="group-name-input" placeholder="Group name..." />
-            <button class="group-set-btn" onclick="setGroupName()">SET</button>
-          </div>
-          <div class="group-nav">
-            <button class="group-nav-btn" onclick="prevGroup()">← PREV</button>
-            <div class="group-counter" id="group-counter">1 / 24</div>
-            <button class="group-nav-btn" onclick="nextGroup()">NEXT →</button>
+      <div class="current-group-box">
+        <div>
+          <div class="current-group-label">Now Pitching</div>
+          <div class="current-group-name" id="current-group-display">Group 1</div>
+          <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+            <div class="group-input-wrap" style="margin-bottom:0;">
+              <input class="group-input" id="group-name-input" placeholder="Group name..." />
+              <button class="group-set-btn" onclick="setGroupName()">SET</button>
+            </div>
+            <div class="group-nav">
+              <button class="group-nav-btn" onclick="prevGroup()">← PREV</button>
+              <div class="group-counter" id="group-counter">1 / 24</div>
+              <button class="group-nav-btn" onclick="nextGroup()">NEXT →</button>
+            </div>
           </div>
         </div>
+        <div>
+          <div class="pitch-timer-label">Pitch Timer</div>
+          <div class="pitch-timer-display" id="pitch-timer">3:00</div>
+        </div>
       </div>
-      <div>
-        <div class="pitch-timer-label">Pitch Timer</div>
-        <div class="pitch-timer-display" id="pitch-timer">3:00</div>
+
+      <div class="sharks-controls">
+        <button class="shark-btn" onclick="startPitchTimer()">▶ START PITCH</button>
+        <button class="shark-btn secondary" onclick="resetPitchTimer()">↺ RESET</button>
+      </div>
+
+      <div class="sharks-rules">
+        <div class="rule-card">
+          <h4>Sharks: You Have €500K</h4>
+          <p>Decide how much to invest in each pitch — scan the QR. You can vote on multiple groups. After all pitches: live leaderboard reveals the winner.</p>
+        </div>
+        <div class="rule-card">
+          <h4>What to Judge</h4>
+          <p>Does the problem feel real? Do you trust this team? Was the pitch clear in 3 minutes? Did you want to know more — or check your phone?</p>
+        </div>
+        <div class="rule-card">
+          <h4>After Each Pitch</h4>
+          <p>30 seconds of shark questions. One person asks the hardest question they can think of. Pitcher must answer — no "we'll figure it out."</p>
+        </div>
       </div>
     </div>
 
-    <div class="sharks-controls">
-      <button class="shark-btn" onclick="startPitchTimer()">▶ START PITCH</button>
-      <button class="shark-btn secondary" onclick="resetPitchTimer()">↺ RESET</button>
-    </div>
-
-    <div class="sharks-rules">
-      <div class="rule-card">
-        <h4>Sharks: You Have €500K</h4>
-        <p>Decide how much to "invest" in each pitch. You can split across groups or go all-in on one. After all pitches: show hands — who invested in which group?</p>
+    <!-- RIGHT: live results panel -->
+    <div class="shark-live">
+      <div class="shark-live-header">
+        <div class="shark-live-title">Live Votes</div>
+        <div class="shark-live-count"><span id="shark-vote-count">0</span> <span>votes cast</span></div>
       </div>
-      <div class="rule-card">
-        <h4>What to Judge</h4>
-        <p>Does the problem feel real? Do you trust this team? Was the pitch clear in 3 minutes? Did you want to know more — or check your phone?</p>
+      <div class="shark-qr">
+        <img src="qr_submit_s2_sharks.png" alt="QR shark vote" />
+        <div class="shark-qr-label">Scan to vote</div>
       </div>
-      <div class="rule-card">
-        <h4>After Each Pitch</h4>
-        <p>30 seconds of shark questions. One person asks the hardest question they can think of. Pitcher must answer — no "we'll figure it out."</p>
+      <div class="shark-groups" id="shark-groups">
+        <div class="shark-empty" id="shark-empty">Waiting for votes...<br>Students scan the QR while groups pitch.</div>
       </div>
     </div>
   </div>
@@ -672,22 +711,83 @@ Style: dark background (#0a0a12), accent color [PICK ONE HEX], bold sans-serif f
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script>
+  firebase.initializeApp(window.firebaseConfig);
+  const db = firebase.database();
+
+  // ── Shark live votes ──
+  const sharkData = {};
+
+  db.ref('communication-s2-sharks').on('child_added', snap => {
+    sharkData[snap.key] = snap.val();
+    renderSharkVotes();
+  });
+
+  function renderSharkVotes() {
+    const vals = Object.values(sharkData);
+    document.getElementById('shark-vote-count').textContent = vals.length;
+
+    // Group by group name
+    const groups = {};
+    vals.forEach(v => {
+      const key = (v.group || 'Unknown').toUpperCase().trim();
+      if (!groups[key]) groups[key] = { yes: 0, no: 0, maybe: 0, amount: 0 };
+      if (v.invest === 'YES') { groups[key].yes++; groups[key].amount += (v.amount || 0); }
+      else if (v.invest === 'NO') groups[key].no++;
+      else if (v.invest === 'MAYBE') { groups[key].maybe++; groups[key].amount += (v.amount || 0); }
+    });
+
+    const container = document.getElementById('shark-groups');
+    const empty = document.getElementById('shark-empty');
+
+    if (Object.keys(groups).length === 0) {
+      empty.style.display = 'block';
+      // Remove all group rows
+      container.querySelectorAll('.shark-group-row').forEach(el => el.remove());
+      return;
+    }
+    empty.style.display = 'none';
+
+    // Sort by YES count desc
+    const sorted = Object.entries(groups).sort((a,b) => b[1].yes - a[1].yes);
+
+    // Re-render all group rows
+    container.querySelectorAll('.shark-group-row').forEach(el => el.remove());
+    sorted.forEach(([name, tally]) => {
+      const row = document.createElement('div');
+      row.className = 'shark-group-row';
+      const amtStr = tally.amount > 0 ? '€' + tally.amount.toLocaleString() : '';
+      row.innerHTML = `
+        <div class="shark-group-name">${name}</div>
+        <div class="shark-tally">
+          <div class="tally-chip tally-yes">✓ ${tally.yes}</div>
+          <div class="tally-chip tally-no">✗ ${tally.no}</div>
+          <div class="tally-chip tally-maybe">? ${tally.maybe}</div>
+          ${amtStr ? `<div class="tally-amount">${amtStr}</div>` : ''}
+        </div>`;
+      container.appendChild(row);
+    });
+  }
+
+  // ── Nav ──
   let currentGroup = 1;
   const totalGroups = 24;
 
-  function show(name) {
+  function show(name, btn) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('screen-' + name).classList.add('active');
-    event.target.classList.add('active');
+    if (btn) btn.classList.add('active');
   }
 
-  function showTab(name) {
+  function showTab(name, btn) {
     document.querySelectorAll('.theory-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.theory-tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
-    event.target.classList.add('active');
+    if (btn) btn.classList.add('active');
   }
 
   // ── Timers ──
