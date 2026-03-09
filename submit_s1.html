@@ -3,43 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clip Analysis | Communication S1</title>
+<title>Rate the Clips | Communication S1</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0a0a12; --surface: #13131f; --border: #2a2a3e; --text: #e8e8f0;
-    --muted: #6b6b8a; --accent: #ff6b35;
+    --muted: #6b6b8a; --accent: #ff6b35; --red: #ff4757; --green: #2ed573; --gold: #ffd32a;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-top: 4px solid var(--accent); max-width: 480px; width: 100%; padding: 36px 32px; }
-  .badge { background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; padding: 3px 12px; display: inline-block; margin-bottom: 16px; font-weight: 700; }
-  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 2px; line-height: 0.95; margin-bottom: 6px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-top: 4px solid var(--accent); max-width: 500px; width: 100%; padding: 32px 28px; }
+  .badge { background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; padding: 3px 12px; display: inline-block; margin-bottom: 14px; font-weight: 700; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 2px; line-height: 0.95; margin-bottom: 6px; }
   h1 span { color: var(--accent); }
-  .sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
-  .field { margin-bottom: 20px; }
-  label { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-  .q-text { font-size: 15px; font-weight: 700; margin-bottom: 10px; line-height: 1.4; }
-  input[type="text"], textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; padding: 10px 14px; outline: none; transition: border-color 0.2s; }
-  input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
-  textarea { resize: vertical; min-height: 72px; }
-  .word-input { font-size: 20px; font-weight: 700; text-align: center; letter-spacing: 2px; }
+  .sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
   .name-field { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-  .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; letter-spacing: 3px; padding: 14px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; margin-top: 8px; }
+  label { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  input[type="text"] { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; padding: 10px 14px; outline: none; transition: border-color 0.2s; }
+  input[type="text"]:focus { border-color: var(--accent); }
+
+  /* clip section */
+  .clip-section { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .clip-section:last-of-type { border-bottom: none; }
+  .clip-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .clip-badge { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; font-weight: 700; padding: 3px 10px; }
+  .clip-badge.bad { background: rgba(255,71,87,0.15); color: var(--red); border: 1px solid rgba(255,71,87,0.3); }
+  .clip-badge.good { background: rgba(46,213,115,0.12); color: var(--green); border: 1px solid rgba(46,213,115,0.3); }
+  .clip-name { font-size: 15px; font-weight: 700; }
+
+  /* rating rows */
+  .rating-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .rating-row:last-child { border-bottom: none; }
+  .rating-dim { font-size: 13px; color: var(--muted); flex: 1; }
+  .rating-dots { display: flex; gap: 6px; }
+  .dot { width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 50%; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; transition: all 0.15s; background: transparent; font-family: 'Barlow', sans-serif; }
+  .dot:hover { border-color: var(--accent); color: var(--accent); }
+  .dot.selected { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* invest buttons */
+  .invest-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
+  .invest-label { font-size: 13px; color: var(--muted); }
+  .invest-btns { display: flex; gap: 6px; }
+  .invest-btn { padding: 6px 14px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 1px; cursor: pointer; transition: all 0.15s; }
+  .invest-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .invest-btn.selected-yes { background: rgba(46,213,115,0.15); border-color: var(--green); color: var(--green); }
+  .invest-btn.selected-no { background: rgba(255,71,87,0.12); border-color: var(--red); color: var(--red); }
+  .invest-btn.selected-maybe { background: rgba(255,211,42,0.1); border-color: var(--gold); color: var(--gold); }
+
+  /* word field */
+  .word-section { margin-top: 4px; margin-bottom: 20px; }
+  .word-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; padding: 10px 14px; outline: none; text-align: center; transition: border-color 0.2s; }
+  .word-input:focus { border-color: var(--accent); }
+
+  .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; letter-spacing: 3px; padding: 14px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; }
   .submit-btn:hover { opacity: 0.85; }
   .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .error-msg { display: none; color: var(--red); font-size: 13px; margin-bottom: 10px; }
+
   .success { display: none; text-align: center; padding: 32px 0; }
-  .success-icon { font-size: 52px; margin-bottom: 16px; }
+  .success-icon { font-size: 52px; margin-bottom: 14px; }
   .success h2 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 2px; color: var(--accent); margin-bottom: 8px; }
-  .success p { font-size: 15px; color: var(--muted); line-height: 1.6; }
-  .error-msg { display: none; color: #ff4757; font-size: 13px; margin-top: 8px; }
+  .success p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 </style>
 </head>
 <body>
 <div class="card">
-  <div class="badge">SESSION 1 — CLIP ANALYSIS</div>
-  <h1>WHAT DID<br><span>YOU SEE?</span></h1>
-  <div class="sub">You just watched two pitches. One worked. One didn't. Tell us what you noticed — no right answers.</div>
+  <div class="badge">SESSION 1 — LIVE RATING</div>
+  <h1>RATE THE<br><span>CLIPS.</span></h1>
+  <div class="sub">Watch each clip, then score it. Your ratings appear live on the professor's screen.</div>
 
   <div id="form-section">
     <div class="name-field">
@@ -47,32 +79,84 @@
       <input type="text" id="f-name" placeholder="Sofia Rossi" />
     </div>
 
-    <div class="field">
-      <label>Question 1</label>
-      <div class="q-text">What made Scrub Daddy work? What did the pitcher do that the other didn't?</div>
-      <textarea id="f-q1" placeholder="What stood out to you..."></textarea>
+    <!-- CLIP 1 -->
+    <div class="clip-section">
+      <div class="clip-header">
+        <div class="clip-badge bad">CLIP 1</div>
+        <div class="clip-name">Sweet Ballz</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-dim">🎙 Voice — pace, tone</div>
+        <div class="rating-dots" id="c1-voice"></div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-dim">🧍 Body language</div>
+        <div class="rating-dots" id="c1-body"></div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-dim">📐 Structure</div>
+        <div class="rating-dots" id="c1-structure"></div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-dim">🤝 Connection</div>
+        <div class="rating-dots" id="c1-connection"></div>
+      </div>
+      <div class="invest-row">
+        <div class="invest-label">💰 Would you invest?</div>
+        <div class="invest-btns">
+          <button class="invest-btn" onclick="setInvest('c1',this,'YES')">YES</button>
+          <button class="invest-btn" onclick="setInvest('c1',this,'NO')">NO</button>
+          <button class="invest-btn" onclick="setInvest('c1',this,'MAYBE')">MAYBE</button>
+        </div>
+      </div>
     </div>
 
-    <div class="field">
-      <label>Question 2</label>
-      <div class="q-text">What went wrong in Sweet Ballz? What would you change?</div>
-      <textarea id="f-q2" placeholder="What would you fix..."></textarea>
+    <!-- CLIP 2 -->
+    <div class="clip-section">
+      <div class="clip-header">
+        <div class="clip-badge good">CLIP 2</div>
+        <div class="clip-name">Scrub Daddy</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-dim">🎙 Voice — pace, tone</div>
+        <div class="rating-dots" id="c2-voice"></div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-dim">🧍 Body language</div>
+        <div class="rating-dots" id="c2-body"></div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-dim">📐 Structure</div>
+        <div class="rating-dots" id="c2-structure"></div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-dim">🤝 Connection</div>
+        <div class="rating-dots" id="c2-connection"></div>
+      </div>
+      <div class="invest-row">
+        <div class="invest-label">💰 Would you invest?</div>
+        <div class="invest-btns">
+          <button class="invest-btn" onclick="setInvest('c2',this,'YES')">YES</button>
+          <button class="invest-btn" onclick="setInvest('c2',this,'NO')">NO</button>
+          <button class="invest-btn" onclick="setInvest('c2',this,'MAYBE')">MAYBE</button>
+        </div>
+      </div>
     </div>
 
-    <div class="field">
-      <label>One word only</label>
-      <div class="q-text">One word that describes what makes a great communicator:</div>
+    <!-- Word -->
+    <div class="word-section">
+      <label>One word — what makes a great communicator?</label>
       <input type="text" id="f-word" class="word-input" placeholder="CLARITY" maxlength="25" />
     </div>
 
-    <div class="error-msg" id="err-msg">Please fill in all fields.</div>
-    <button class="submit-btn" id="submit-btn" onclick="submitForm()">SUBMIT →</button>
+    <div class="error-msg" id="err-msg">Please fill in all ratings and your name.</div>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">SUBMIT RATINGS →</button>
   </div>
 
   <div class="success" id="success-section">
     <div class="success-icon">✓</div>
     <h2>SUBMITTED.</h2>
-    <p>Your analysis is live on the screen.<br>Watch your word appear in the cloud.</p>
+    <p>Your ratings are live on the screen.<br>Watch the class averages update.</p>
   </div>
 </div>
 
@@ -83,13 +167,45 @@
   firebase.initializeApp(window.firebaseConfig);
   const db = firebase.database();
 
+  const ratings = {
+    'c1-voice': 0, 'c1-body': 0, 'c1-structure': 0, 'c1-connection': 0, 'c1-invest': '',
+    'c2-voice': 0, 'c2-body': 0, 'c2-structure': 0, 'c2-connection': 0, 'c2-invest': ''
+  };
+
+  // Build dot groups
+  ['c1-voice','c1-body','c1-structure','c1-connection',
+   'c2-voice','c2-body','c2-structure','c2-connection'].forEach(key => {
+    const el = document.getElementById(key);
+    for (let i = 1; i <= 5; i++) {
+      const d = document.createElement('button');
+      d.className = 'dot';
+      d.textContent = i;
+      d.onclick = () => {
+        ratings[key] = i;
+        el.querySelectorAll('.dot').forEach((dd, idx) => {
+          dd.classList.toggle('selected', idx < i);
+        });
+      };
+      el.appendChild(d);
+    }
+  });
+
+  function setInvest(clip, btn, val) {
+    ratings[clip + '-invest'] = val;
+    btn.closest('.invest-btns').querySelectorAll('.invest-btn').forEach(b => {
+      b.className = 'invest-btn';
+    });
+    btn.classList.add('selected-' + val.toLowerCase());
+  }
+
   function submitForm() {
     const name = document.getElementById('f-name').value.trim();
-    const q1 = document.getElementById('f-q1').value.trim();
-    const q2 = document.getElementById('f-q2').value.trim();
     const word = document.getElementById('f-word').value.trim().toUpperCase();
-
-    if (!name || !q1 || !q2 || !word) {
+    const dims = ['voice','body','structure','connection'];
+    const allRated = ['c1','c2'].every(c =>
+      dims.every(d => ratings[c+'-'+d] > 0) && ratings[c+'-invest']
+    );
+    if (!name || !word || !allRated) {
       document.getElementById('err-msg').style.display = 'block';
       return;
     }
@@ -98,14 +214,25 @@
     document.getElementById('submit-btn').textContent = 'SUBMITTING...';
 
     db.ref('communication-s1/' + Date.now()).set({
-      name, field1: q1, field2: q2, field3: word,
+      name,
+      c1_voice: ratings['c1-voice'],
+      c1_body: ratings['c1-body'],
+      c1_structure: ratings['c1-structure'],
+      c1_connection: ratings['c1-connection'],
+      c1_invest: ratings['c1-invest'],
+      c2_voice: ratings['c2-voice'],
+      c2_body: ratings['c2-body'],
+      c2_structure: ratings['c2-structure'],
+      c2_connection: ratings['c2-connection'],
+      c2_invest: ratings['c2-invest'],
+      field3: word,
       timestamp: new Date().toISOString()
     }).then(() => {
       document.getElementById('form-section').style.display = 'none';
       document.getElementById('success-section').style.display = 'block';
     }).catch(err => {
       document.getElementById('submit-btn').disabled = false;
-      document.getElementById('submit-btn').textContent = 'SUBMIT →';
+      document.getElementById('submit-btn').textContent = 'SUBMIT RATINGS →';
       document.getElementById('err-msg').textContent = 'Error: ' + err.message;
       document.getElementById('err-msg').style.display = 'block';
     });

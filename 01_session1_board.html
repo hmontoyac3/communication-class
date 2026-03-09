@@ -74,24 +74,48 @@
   /* live feed tab */
   .clip-tab-live { border-color: var(--purple) !important; color: var(--purple) !important; }
   .clip-tab-live.active { background: var(--purple) !important; color: #fff !important; }
-  .clip-panel-live { display: none; flex-direction: row; gap: 24px; }
+  .clip-panel-live { display: none; flex-direction: row; gap: 20px; height: 100%; }
   .clip-panel-live.active { display: flex; }
-  .live-left { width: 260px; flex-shrink: 0; }
-  .live-count-box { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--purple); padding: 20px; margin-bottom: 16px; text-align: center; }
-  .live-count-num { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--purple); line-height: 1; }
-  .live-count-label { font-size: 12px; color: var(--muted); }
-  .live-qr-box { border: 2px dashed var(--border); background: var(--surface); padding: 28px 20px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; }
-  .live-qr-icon { font-size: 40px; opacity: 0.3; margin-bottom: 8px; }
-  .live-right { flex: 1; display: flex; flex-direction: column; gap: 16px; }
-  .live-wordcloud { background: var(--surface); border: 1px solid var(--border); padding: 20px; min-height: 120px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: center; }
+
+  /* left sidebar */
+  .live-left { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+  .live-count-box { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--purple); padding: 16px; text-align: center; }
+  .live-count-num { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--purple); line-height: 1; }
+  .live-count-label { font-size: 11px; color: var(--muted); }
+  .live-qr-box { background: var(--surface); border: 1px solid var(--border); padding: 16px 12px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+  .live-word-cloud-box { background: var(--surface); border: 1px solid var(--border); padding: 14px; flex: 1; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: center; overflow: hidden; }
   .live-word-chip { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; line-height: 1; transition: all 0.5s; }
-  .live-feed { flex: 1; background: var(--surface); border: 1px solid var(--border); overflow-y: auto; max-height: 300px; }
-  .live-feed-item { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .live-feed-item.new-entry { animation: liveIn 0.5s ease; }
-  @keyframes liveIn { from { background: rgba(165,94,234,0.2); } to { background: transparent; } }
-  .live-feed-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-  .live-feed-word { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; color: var(--purple); text-transform: uppercase; margin-bottom: 4px; }
-  .live-feed-text { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* scores area */
+  .live-right { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+  .scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .score-card { background: var(--surface); border: 1px solid var(--border); padding: 16px 18px; }
+  .score-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .score-clip-badge { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 2px; font-weight: 700; padding: 2px 8px; }
+  .score-clip-badge.bad { background: rgba(255,71,87,0.15); color: var(--red); }
+  .score-clip-badge.good { background: rgba(46,213,115,0.12); color: var(--green); }
+  .score-clip-name { font-size: 14px; font-weight: 700; }
+  .score-dim { margin-bottom: 10px; }
+  .score-dim-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .score-dim-label span { font-weight: 700; }
+  .score-bar-bg { height: 6px; background: var(--border); border-radius: 3px; }
+  .score-bar-fill { height: 6px; border-radius: 3px; transition: width 0.6s ease; width: 0%; }
+  .score-bar-fill.bad { background: var(--red); }
+  .score-bar-fill.good { background: var(--green); }
+  .invest-tally { margin-top: 12px; display: flex; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .invest-pill { flex: 1; text-align: center; padding: 6px 4px; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1px; }
+  .invest-pill-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
+  .invest-pill.yes { color: var(--green); }
+  .invest-pill.no { color: var(--red); }
+  .invest-pill.maybe { color: var(--gold); }
+
+  /* recent names */
+  .live-names { background: var(--surface); border: 1px solid var(--border); padding: 12px 16px; }
+  .live-names-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .live-names-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .live-name-tag { font-size: 12px; color: var(--text); background: rgba(165,94,234,0.1); border: 1px solid rgba(165,94,234,0.2); padding: 2px 8px; }
+  .live-name-tag.new-tag { animation: tagIn 0.4s ease; }
+  @keyframes tagIn { from { background: rgba(165,94,234,0.4); } to { background: rgba(165,94,234,0.1); } }
   .clip-info { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); padding: 24px; }
   .clip-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
   .clip-name { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px; margin-bottom: 8px; }
@@ -652,19 +676,55 @@
     <div class="live-left">
       <div class="live-count-box">
         <div class="live-count-num" id="live-count-main">0</div>
-        <div class="live-count-label">responses received</div>
+        <div class="live-count-label">ratings received</div>
       </div>
       <div class="live-qr-box">
-        <img src="qr_submit_s1.png" style="width:160px;height:160px;display:block;margin:0 auto;" alt="QR submit_s1" />
-        <div style="margin-top:8px;">submit_s1.html</div>
+        <img src="qr_submit_s1.png" style="width:140px;height:140px;display:block;margin:0 auto 6px;" alt="QR" />
+        <div>submit_s1.html</div>
+      </div>
+      <div class="live-word-cloud-box" id="live-wordcloud">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Words appear here...</div>
       </div>
     </div>
     <div class="live-right">
-      <div class="live-wordcloud" id="live-wordcloud">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Waiting for submissions...</div>
+      <div class="scores-grid">
+        <!-- Clip 1 scores -->
+        <div class="score-card">
+          <div class="score-card-header">
+            <div class="score-clip-badge bad">CLIP 1</div>
+            <div class="score-clip-name">Sweet Ballz</div>
+          </div>
+          <div class="score-dim"><div class="score-dim-label">🎙 Voice <span id="c1-voice-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-voice-bar"></div></div></div>
+          <div class="score-dim"><div class="score-dim-label">🧍 Body language <span id="c1-body-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-body-bar"></div></div></div>
+          <div class="score-dim"><div class="score-dim-label">📐 Structure <span id="c1-structure-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-structure-bar"></div></div></div>
+          <div class="score-dim"><div class="score-dim-label">🤝 Connection <span id="c1-connection-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-connection-bar"></div></div></div>
+          <div class="invest-tally">
+            <div class="invest-pill yes"><div class="invest-pill-num" id="c1-yes">0</div>YES</div>
+            <div class="invest-pill no"><div class="invest-pill-num" id="c1-no">0</div>NO</div>
+            <div class="invest-pill maybe"><div class="invest-pill-num" id="c1-maybe">0</div>MAYBE</div>
+          </div>
+        </div>
+        <!-- Clip 2 scores -->
+        <div class="score-card">
+          <div class="score-card-header">
+            <div class="score-clip-badge good">CLIP 2</div>
+            <div class="score-clip-name">Scrub Daddy</div>
+          </div>
+          <div class="score-dim"><div class="score-dim-label">🎙 Voice <span id="c2-voice-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-voice-bar"></div></div></div>
+          <div class="score-dim"><div class="score-dim-label">🧍 Body language <span id="c2-body-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-body-bar"></div></div></div>
+          <div class="score-dim"><div class="score-dim-label">📐 Structure <span id="c2-structure-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-structure-bar"></div></div></div>
+          <div class="score-dim"><div class="score-dim-label">🤝 Connection <span id="c2-connection-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-connection-bar"></div></div></div>
+          <div class="invest-tally">
+            <div class="invest-pill yes"><div class="invest-pill-num" id="c2-yes">0</div>YES</div>
+            <div class="invest-pill no"><div class="invest-pill-num" id="c2-no">0</div>NO</div>
+            <div class="invest-pill maybe"><div class="invest-pill-num" id="c2-maybe">0</div>MAYBE</div>
+          </div>
+        </div>
       </div>
-      <div class="live-feed" id="live-feed">
-        <div style="padding:16px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Responses appear here as students submit →</div>
+      <!-- Recent names -->
+      <div class="live-names">
+        <div class="live-names-label">Submitted</div>
+        <div class="live-names-list" id="live-names-list"></div>
       </div>
     </div>
   </div>
@@ -695,35 +755,57 @@ function showClipLive() {
   document.querySelectorAll('.clip-tab')[2].classList.add('active');
 }
 
-// ── Live Firebase feed ──
+// ── Live Firebase ratings ──
 const liveColors = ['#a55eea','#ff6b35','#2ed573','#ffd32a','#3d84ff','#ff4757'];
-let livesubmissions = {}, liveSeenKeys = new Set();
+let liveData = {}, liveSeenKeys = new Set();
+const dims = ['voice','body','structure','connection'];
 
 function livePickColor(w) {
-  let h = 0; for (let i=0;i<w.length;i++) h = w.charCodeAt(i)+((h<<5)-h);
+  let h=0; for(let i=0;i<w.length;i++) h=w.charCodeAt(i)+((h<<5)-h);
   return liveColors[Math.abs(h)%liveColors.length];
 }
 
-function liveEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function updateScores() {
+  const vals = Object.values(liveData);
+  const n = vals.length;
+  if (!n) return;
 
-function liveRebuildCloud() {
+  // averages per dimension per clip
+  ['c1','c2'].forEach(c => {
+    dims.forEach(d => {
+      const avg = vals.reduce((s,v) => s+(v[c+'_'+d]||0), 0) / n;
+      const pct = (avg/5*100).toFixed(0);
+      const el = document.getElementById(c+'-'+d+'-val');
+      const bar = document.getElementById(c+'-'+d+'-bar');
+      if (el) el.textContent = avg.toFixed(1);
+      if (bar) bar.style.width = pct+'%';
+    });
+    // invest tally
+    const yes = vals.filter(v=>v[c+'_invest']==='YES').length;
+    const no  = vals.filter(v=>v[c+'_invest']==='NO').length;
+    const mb  = vals.filter(v=>v[c+'_invest']==='MAYBE').length;
+    document.getElementById(c+'-yes').textContent = yes;
+    document.getElementById(c+'-no').textContent  = no;
+    document.getElementById(c+'-maybe').textContent = mb;
+  });
+
+  // word cloud
   const freq = {};
-  Object.values(livesubmissions || livesubmissions).forEach(s => {
-    if (s.field3) { const w=s.field3.trim().toUpperCase(); if(w) freq[w]=(freq[w]||0)+1; }
-  });
-  const entries = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,30);
-  if (!entries.length) return;
-  const max = entries[0][1];
-  const c = document.getElementById('live-wordcloud');
-  c.innerHTML = '';
-  entries.forEach(([w,n]) => {
-    const chip = document.createElement('div');
-    chip.className = 'live-word-chip';
-    chip.textContent = w;
-    chip.style.fontSize = (16 + (n/max)*40)+'px';
-    chip.style.color = livePickColor(w);
-    c.appendChild(chip);
-  });
+  vals.forEach(s => { if(s.field3){const w=s.field3.trim().toUpperCase(); if(w) freq[w]=(freq[w]||0)+1;} });
+  const entries = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,20);
+  if (entries.length) {
+    const max = entries[0][1];
+    const cloud = document.getElementById('live-wordcloud');
+    cloud.innerHTML = '';
+    entries.forEach(([w,cnt]) => {
+      const chip = document.createElement('div');
+      chip.className = 'live-word-chip';
+      chip.textContent = w;
+      chip.style.fontSize = (12+(cnt/max)*22)+'px';
+      chip.style.color = livePickColor(w);
+      cloud.appendChild(chip);
+    });
+  }
 }
 
 (function initLive() {
@@ -734,20 +816,17 @@ function liveRebuildCloud() {
     const key = snap.key, data = snap.val();
     if (!data || liveSeenKeys.has(key)) return;
     liveSeenKeys.add(key);
-    livesubmissions[key] = data;
-    // update count
-    const n = Object.keys(livesubmissions).length;
+    liveData[key] = data;
+    const n = Object.keys(liveData).length;
     document.getElementById('live-count-main').textContent = n;
     document.getElementById('live-count-badge').textContent = n;
-    // add to feed
-    const feed = document.getElementById('live-feed');
-    const item = document.createElement('div');
-    item.className = 'live-feed-item new-entry';
-    item.innerHTML = `<div class="live-feed-name">${liveEsc(data.name||'—')}</div>
-      <div class="live-feed-word">${liveEsc(data.field3||'')}</div>
-      <div class="live-feed-text">${liveEsc((data.field1||'').slice(0,80))}${(data.field1||'').length>80?'…':''}</div>`;
-    feed.insertBefore(item, feed.firstChild);
-    liveRebuildCloud();
+    // add name tag
+    const list = document.getElementById('live-names-list');
+    const tag = document.createElement('div');
+    tag.className = 'live-name-tag new-tag';
+    tag.textContent = data.name || '—';
+    list.insertBefore(tag, list.firstChild);
+    updateScores();
   });
 })();
 
