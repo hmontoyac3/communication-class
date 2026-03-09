@@ -232,13 +232,13 @@
     <div class="session-title">WHY MESSAGES BREAK DOWN · 14:45–16:15</div>
   </div>
   <div class="topbar-right">
-    <button class="nav-btn active" onclick="show('intro')">Intro</button>
-    <button class="nav-btn" onclick="show('hook')">Hook</button>
-    <button class="nav-btn" onclick="show('clips')">Clips</button>
-    <button class="nav-btn" onclick="show('theory1')">Theory 1</button>
-    <button class="nav-btn" onclick="show('brief')">The Brief</button>
-    <button class="nav-btn" onclick="show('theory2')">Theory 2</button>
-    <button class="nav-btn" onclick="show('setup')">S2 Setup</button>
+    <button class="nav-btn active" onclick="show('intro',this)">Intro</button>
+    <button class="nav-btn" onclick="show('hook',this)">Hook</button>
+    <button class="nav-btn" onclick="show('clips',this)">Clips</button>
+    <button class="nav-btn" onclick="show('theory1',this)">Theory 1</button>
+    <button class="nav-btn" onclick="show('brief',this)">The Brief</button>
+    <button class="nav-btn" onclick="show('theory2',this)">Theory 2</button>
+    <button class="nav-btn" onclick="show('setup',this)">S2 Setup</button>
   </div>
 </div>
 
@@ -674,11 +674,11 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script>
-function show(id) {
+function show(id, btn) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('screen-' + id).classList.add('active');
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
 function showClip(idx) {
@@ -750,7 +750,6 @@ function liveRebuildCloud() {
     liveRebuildCloud();
   });
 })();
-var livesubmissions = {};
 
 function showPhase(idx) {
   document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
