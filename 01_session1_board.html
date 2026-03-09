@@ -69,7 +69,9 @@
   .clip-tab { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 2px; padding: 8px 20px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; background: transparent; color: var(--muted); }
   .clip-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
   .clip-panel { display: none; }
-  .clip-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .clip-panel.active { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+  .clip-video { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-bottom: 16px; background: #000; }
+  .clip-video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
   /* live feed tab */
   .clip-tab-live { border-color: var(--purple) !important; color: var(--purple) !important; }
@@ -312,27 +314,25 @@
 <div class="screen" id="screen-clips">
   <div class="clips-screen">
     <div class="clips-title">VIDEO <span>ANALYSIS</span></div>
-    <div class="clips-sub">Watch each clip. Score on the rubric. Discuss with your group.</div>
+    <div class="clips-sub">Watch each clip. Score on the rubric.</div>
 
     <div class="clips-tabs">
-      <button class="clip-tab active" onclick="showClip(0)">CLIP 1 — THE FAIL</button>
-      <button class="clip-tab clip-good-tab" onclick="showClip(1)">CLIP 2 — THE WIN</button>
+      <button class="clip-tab active" onclick="showClip(0)">CLIP 1</button>
+      <button class="clip-tab clip-good-tab" onclick="showClip(1)">CLIP 2</button>
       <button class="clip-tab clip-tab-live" onclick="showClipLive()" style="margin-left:auto;">LIVE RESPONSES <span id="live-count-badge" style="background:rgba(165,94,234,0.3);padding:1px 7px;border-radius:10px;font-size:11px;">0</span></button>
     </div>
 
     <!-- Clip 1: Sweet Ballz -->
     <div class="clip-panel active" id="clip-0">
-      <div class="clip-info">
-        <div class="clip-label">⚠ WHAT NOT TO DO</div>
-        <div class="clip-name">Sweet Ballz — Shark Tank S5</div>
-        <div class="clip-desc">Two co-founders. One product. Watch what happens when internal communication breaks down in front of the people who matter most. The sharks don't say no to the product. They say no to the people.</div>
-        <div class="clip-search">YouTube → <span>"Sweet Ballz Shark Tank"</span></div>
-        <div class="clip-watch-note">▶ Play 3–4 minutes. Stop before sharks make offers.</div>
-        <div class="clip-discuss">
-          After watching: <strong>"What exactly killed this pitch? Was it the product?"</strong><br>
-          Give groups 2 minutes. Then ask the class.
+      <div>
+        <div class="clip-video">
+          <iframe src="https://www.youtube.com/embed/xFSqPpi-400?si=cbttkFjIYCVn5E4M&start=14" title="Sweet Ballz Shark Tank" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
-        <div class="prof-note">Key moments to watch: ~1:40 the partners start contradicting each other. Non-verbal tells everything. Body posture, eye contact lost, defensive arms. Point these out after.</div>
+        <div class="clip-info">
+          <div class="clip-label">⚠ WHAT NOT TO DO</div>
+          <div class="clip-name">Sweet Ballz — Shark Tank S5</div>
+          <div class="clip-desc">Two co-founders. One product. Watch what happens when internal communication breaks down in front of the people who matter most.</div>
+        </div>
       </div>
       <div class="rubric-card">
         <div class="rubric-title">Rate as you watch · scan to submit on your phone</div>
@@ -350,17 +350,15 @@
 
     <!-- Clip 2: Scrub Daddy -->
     <div class="clip-panel" id="clip-1">
-      <div class="clip-info clip-good">
-        <div class="clip-label" style="color:var(--green)">✓ WHAT GREAT LOOKS LIKE</div>
-        <div class="clip-name">Scrub Daddy — Shark Tank S4</div>
-        <div class="clip-desc">Aaron Krause. Considered one of the best pitches in Shark Tank history. Same rubric. Notice what he does in the first 30 seconds. Notice how he handles questions. Notice what you feel.</div>
-        <div class="clip-search">YouTube → <span>"Scrub Daddy Shark Tank original pitch"</span></div>
-        <div class="clip-watch-note">▶ Play 4–5 minutes. Stop before deal is struck.</div>
-        <div class="clip-discuss" style="border-color:rgba(46,213,115,0.3);background:rgba(46,213,115,0.05)">
-          After watching: <strong style="color:var(--green)">"What did he do in the first 30 seconds that Clip 1 didn't?"</strong><br>
-          Groups 2 min → class share. Then professor names the concepts.
+      <div>
+        <div class="clip-video">
+          <iframe src="https://www.youtube.com/embed/ae5MssJ8en4?si=QYcajyW52iPKCwFs&start=14" title="Scrub Daddy Shark Tank" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
-        <div class="prof-note">Key moments: Opening story (not "hi I'm Aaron"). Product demo is physical, engaging, memorable. He answers every question with confidence, not defensiveness. Perfect example of primacy effect.</div>
+        <div class="clip-info clip-good">
+          <div class="clip-label" style="color:var(--green)">✓ WHAT GREAT LOOKS LIKE</div>
+          <div class="clip-name">Scrub Daddy — Shark Tank S4</div>
+          <div class="clip-desc">Aaron Krause. Considered one of the best pitches in Shark Tank history. Same rubric. Notice what he does in the first 30 seconds. Notice how he handles questions. Notice what you feel.</div>
+        </div>
       </div>
       <div class="rubric-card">
         <div class="rubric-title">Same rubric · scan to submit on your phone</div>
@@ -432,7 +430,7 @@
 <div class="screen" id="screen-theory1">
   <div class="theory-screen">
     <div class="theory-title">THEORY FLASH <span>1</span></div>
-    <div class="theory-sub">Now you've seen it. Here's why it happens. 8 minutes. Professor talks — this is the framework.</div>
+    <div class="theory-sub">Now you've seen it. Here's why it happens.</div>
 
     <div class="theory-grid">
       <div class="theory-card">
@@ -450,7 +448,7 @@
             <span class="funnel-pct">90%</span>
           </div>
           <div class="funnel-step">
-            <span class="funnel-lbl">What they hear + make sense of</span>
+            <span class="funnel-lbl">Hear + make sense of</span>
             <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:50%;background:rgba(255,107,53,0.42);color:#fff">HEAR</div></div>
             <span class="funnel-pct">50%</span>
           </div>
@@ -522,17 +520,12 @@
 
     <!-- Phase 1: Show the brief -->
     <div class="phase-panel active" id="brief-phase-0">
-      <div class="brief-warning">⚠ Professor reads this aloud. Class listens. No recording. No notes until it's over.</div>
+      <div class="brief-warning"> Class listens. No recording. No notes until it's over.</div>
       <div class="brief-text-card">
         <div class="brief-header">Incoming message from your manager · Read once · No replay</div>
         <div class="brief-text">
-          "Alright, listen carefully — I'm only saying this once. Our product team has flagged an issue with the <span class="highlight">Milan launch</span>. The local influencer campaign isn't performing and we need a fix before <span class="highlight">Q3 closes</span>. Sofia from marketing has already spoken to two agencies — the second one, Vivid Creative, looks promising but they're quoting <span class="highlight">€18K</span>, which is over budget. The CFO said <span class="highlight">€15K max</span> unless we can justify ROI clearly. Sofia needs an answer <span class="highlight">by Thursday</span>.<br><br>
-          Meanwhile, logistics in Rome — talk to <span class="highlight">Marco</span> — needs the <span class="highlight">final SKU list</span> no later than three weeks before launch. Work backwards from the launch date. Also, the CEO is presenting to the board <span class="highlight">on the 20th</span> and needs a <span class="highlight">one-pager</span>: key numbers and the go-to-market narrative. Keep it simple.<br><br>
-          One more thing: <span class="highlight">legal</span> needs to sign off on any campaign assets before they go live, so loop them in early. And the regional managers in the north need to align on the rollout — they've been left out and they're not happy about it.<br><br>
-          Can you pull all of this together?"
         </div>
       </div>
-      <div class="prof-note">Read at normal speaking pace. Don't slow down or over-emphasize. That's the point. After reading: "Now, without speaking to your group — write down what you remember. 2 minutes."</div>
     </div>
 
     <!-- Phase 2: Execute timer -->
@@ -580,7 +573,7 @@
           </div>
         </div>
       </div>
-      <div class="prof-note">Show this after groups have compared. Ask: "How many items did you get? Did any group get all 6 action items? What did most people miss?" Usually everyone gets the budget and misses legal / regional managers.</div>
+      <div class="debrief-questions">How many items did you get? Did any group get all 6 action items? What did most people miss?</div>
     </div>
 
     <!-- Phase 4: Debrief -->
@@ -590,7 +583,7 @@
         <div class="debrief-q" onclick="this.classList.toggle('lit')">
           <div class="debrief-q-num">Q1 · INFORMATION OVERLOAD</div>
           <div class="debrief-q-text">Why did nobody get everything?</div>
-          <div class="debrief-q-why">The brief had too many items, too many people, too many deadlines — all at the same priority level. When everything is urgent, nothing is. Our brains drop items under information overload. This happens in every company every day — in meetings, in Slack, in emails.</div>
+          <div class="debrief-q-why">The brief had too many items, too many people, too many deadlines — all at the same priority level. <strong>When everything is urgent, nothing is.</strong> Our brains drop items under information overload. This happens in every company every day — in meetings, in Slack, in emails.</div>
         </div>
         <div class="debrief-q" onclick="this.classList.toggle('lit')">
           <div class="debrief-q-num">Q2 · SELECTIVE PERCEPTION</div>
