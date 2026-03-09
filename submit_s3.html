@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflexión Final | Communication</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a12; --surface: #13131f; --border: #2a2a3e; --text: #e8e8f0;
+    --muted: #6b6b8a; --accent: #ff6b35;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-top: 4px solid var(--accent); max-width: 480px; width: 100%; padding: 36px 32px; }
+  .badge { background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; padding: 3px 12px; display: inline-block; margin-bottom: 16px; font-weight: 700; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 2px; line-height: 0.95; margin-bottom: 6px; }
+  h1 span { color: var(--accent); }
+  .sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+  .field { margin-bottom: 20px; }
+  label { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .q-text { font-size: 16px; font-weight: 700; margin-bottom: 10px; line-height: 1.4; }
+  input[type="text"], textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; padding: 10px 14px; outline: none; transition: border-color 0.2s; }
+  input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 70px; }
+  .word-input { font-size: 20px; font-weight: 700; text-align: center; letter-spacing: 2px; }
+  .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; letter-spacing: 3px; padding: 14px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; margin-top: 8px; }
+  .submit-btn:hover { opacity: 0.85; }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .success { display: none; text-align: center; padding: 32px 0; }
+  .success-icon { font-size: 52px; margin-bottom: 16px; }
+  .success h2 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 2px; color: var(--accent); margin-bottom: 8px; }
+  .success p { font-size: 15px; color: var(--muted); line-height: 1.6; }
+  .error-msg { display: none; color: #ff4757; font-size: 13px; margin-top: 8px; }
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .name-field { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">SESIÓN 3 — REFLEXIÓN</div>
+  <h1>3 COSAS<br><span>HOY.</span></h1>
+  <div class="sub">Responde con honestidad. Tu nombre aparece en el dashboard del profesor, pero las respuestas son tuyas — nadie las juzga.</div>
+
+  <div id="form-section">
+    <div class="name-field">
+      <label>Tu nombre completo *</label>
+      <input type="text" id="f-name" placeholder="Sofia Rossi" />
+    </div>
+
+    <div class="field">
+      <label>Pregunta 1</label>
+      <div class="q-text">Una cosa que <em>NO</em> sabía antes de hoy:</div>
+      <textarea id="f-q1" placeholder="Escribe aquí..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Pregunta 2</label>
+      <div class="q-text">Algo que voy a hacer diferente:</div>
+      <textarea id="f-q2" placeholder="Escribe aquí..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Pregunta 3 — Una sola palabra</label>
+      <div class="q-text">Una palabra que resume el día:</div>
+      <input type="text" id="f-word" class="word-input" placeholder="ESCUCHAR" maxlength="30" />
+    </div>
+
+    <div class="error-msg" id="err-msg">Por favor rellena todos los campos.</div>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">ENVIAR REFLEXIÓN →</button>
+  </div>
+
+  <div class="success" id="success-section">
+    <div class="success-icon">✓</div>
+    <h2>ENVIADO.</h2>
+    <p>Tu reflexión aparece en el word cloud.<br>Gracias por hoy — nos vemos en la próxima sesión.</p>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+  firebase.initializeApp(window.firebaseConfig);
+  const db = firebase.database();
+
+  function submitForm() {
+    const name = document.getElementById('f-name').value.trim();
+    const q1 = document.getElementById('f-q1').value.trim();
+    const q2 = document.getElementById('f-q2').value.trim();
+    const word = document.getElementById('f-word').value.trim().toUpperCase();
+
+    if (!name || !q1 || !q2 || !word) {
+      document.getElementById('err-msg').style.display = 'block';
+      return;
+    }
+    document.getElementById('err-msg').style.display = 'none';
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('submit-btn').textContent = 'ENVIANDO...';
+
+    const ref = db.ref('communication-s3/' + Date.now());
+    ref.set({
+      name,
+      field1: q1,
+      field2: q2,
+      field3: word,
+      timestamp: new Date().toISOString()
+    }).then(() => {
+      document.getElementById('form-section').style.display = 'none';
+      document.getElementById('success-section').style.display = 'block';
+    }).catch(err => {
+      document.getElementById('submit-btn').disabled = false;
+      document.getElementById('submit-btn').textContent = 'ENVIAR REFLEXIÓN →';
+      document.getElementById('err-msg').textContent = 'Error: ' + err.message;
+      document.getElementById('err-msg').style.display = 'block';
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SESSION 1 — Why Messages Break Down | Communication</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a12; --surface: #13131f; --border: #2a2a3e; --text: #e8e8f0;
+    --muted: #6b6b8a; --accent: #ff6b35; --blue: #3d84ff; --green: #2ed573;
+    --gold: #ffd32a; --purple: #a55eea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .session-badge { background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; padding: 4px 12px; font-weight: 700; }
+  .session-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .topbar-right { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-btn { background: var(--border); color: var(--text); border: none; font-family: 'Barlow', sans-serif; font-size: 12px; padding: 6px 14px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; }
+  .nav-btn:hover, .nav-btn.active { background: var(--accent); color: #fff; }
+
+  .screen { display: none; flex: 1; overflow: hidden; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── INTRO ── */
+  .intro-screen { justify-content: center; align-items: center; position: relative; overflow: hidden; }
+  .intro-bg { position: absolute; font-family: 'Bebas Neue', sans-serif; font-size: 220px; color: rgba(255,107,53,0.04); top: 50%; left: 50%; transform: translate(-50%,-50%); white-space: nowrap; pointer-events: none; letter-spacing: 8px; }
+  .intro-content { text-align: center; position: relative; z-index: 1; }
+  .intro-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; }
+  .intro-content h1 { font-family: 'Bebas Neue', sans-serif; font-size: 100px; line-height: 0.9; letter-spacing: 2px; }
+  .intro-content h1 span { color: var(--accent); }
+  .intro-content p { font-size: 20px; color: var(--muted); margin-top: 20px; font-weight: 300; }
+  .stat-row { display: flex; gap: 60px; justify-content: center; margin-top: 48px; }
+  .stat-item { text-align: center; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--accent); display: block; line-height: 1; }
+  .stat-lbl { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); max-width: 160px; line-height: 1.4; display: block; margin-top: 4px; }
+  .intro-quote { margin-top: 40px; font-size: 16px; color: var(--muted); font-style: italic; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+  .intro-quote strong { color: var(--text); }
+
+  /* ── HOOK ── */
+  .hook-screen { justify-content: center; align-items: center; padding: 40px; }
+  .hook-inner { max-width: 860px; width: 100%; text-align: center; }
+  .hook-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; }
+  .hook-q { font-family: 'Bebas Neue', sans-serif; font-size: 72px; line-height: 0.95; letter-spacing: 1px; margin-bottom: 24px; }
+  .hook-q span { color: var(--accent); }
+  .hook-sub { font-size: 20px; color: var(--muted); margin-bottom: 40px; font-weight: 300; line-height: 1.5; }
+  .hook-instruction { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); padding: 24px 32px; margin-bottom: 32px; }
+  .hook-instruction p { font-size: 18px; line-height: 1.7; }
+  .hook-instruction strong { color: var(--accent); }
+  .hook-timer-row { display: flex; justify-content: center; gap: 16px; align-items: center; }
+  .small-timer { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--gold); line-height: 1; min-width: 160px; text-align: center; }
+  .small-timer.urgent { color: var(--accent); animation: pulse 0.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .ctrl-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 2px; padding: 12px 28px; border: 2px solid; cursor: pointer; background: transparent; transition: all 0.2s; }
+  .ctrl-btn.go { border-color: var(--green); color: var(--green); }
+  .ctrl-btn.go:hover { background: var(--green); color: var(--bg); }
+  .ctrl-btn.rst { border-color: var(--muted); color: var(--muted); }
+  .ctrl-btn.rst:hover { border-color: var(--text); color: var(--text); }
+
+  /* ── CLIPS ── */
+  .clips-screen { overflow-y: auto; padding: 32px 48px; flex-direction: column; }
+  .clips-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 2px; margin-bottom: 4px; }
+  .clips-title span { color: var(--accent); }
+  .clips-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
+  .clips-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .clip-tab { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 2px; padding: 8px 20px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; background: transparent; color: var(--muted); }
+  .clip-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .clip-panel { display: none; }
+  .clip-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  /* live feed tab */
+  .clip-tab-live { border-color: var(--purple) !important; color: var(--purple) !important; }
+  .clip-tab-live.active { background: var(--purple) !important; color: #fff !important; }
+  .clip-panel-live { display: none; flex-direction: row; gap: 24px; }
+  .clip-panel-live.active { display: flex; }
+  .live-left { width: 260px; flex-shrink: 0; }
+  .live-count-box { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--purple); padding: 20px; margin-bottom: 16px; text-align: center; }
+  .live-count-num { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--purple); line-height: 1; }
+  .live-count-label { font-size: 12px; color: var(--muted); }
+  .live-qr-box { border: 2px dashed var(--border); background: var(--surface); padding: 28px 20px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; }
+  .live-qr-icon { font-size: 40px; opacity: 0.3; margin-bottom: 8px; }
+  .live-right { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+  .live-wordcloud { background: var(--surface); border: 1px solid var(--border); padding: 20px; min-height: 120px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: center; }
+  .live-word-chip { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; line-height: 1; transition: all 0.5s; }
+  .live-feed { flex: 1; background: var(--surface); border: 1px solid var(--border); overflow-y: auto; max-height: 300px; }
+  .live-feed-item { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .live-feed-item.new-entry { animation: liveIn 0.5s ease; }
+  @keyframes liveIn { from { background: rgba(165,94,234,0.2); } to { background: transparent; } }
+  .live-feed-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .live-feed-word { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; color: var(--purple); text-transform: uppercase; margin-bottom: 4px; }
+  .live-feed-text { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .clip-info { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); padding: 24px; }
+  .clip-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .clip-name { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px; margin-bottom: 8px; }
+  .clip-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+  .clip-search { font-size: 13px; color: var(--border); font-family: monospace; background: rgba(255,255,255,0.04); padding: 8px 12px; border: 1px solid var(--border); display: block; }
+  .clip-search span { color: var(--gold); }
+  .clip-watch-note { font-size: 13px; color: var(--green); margin-top: 10px; font-style: italic; }
+  .rubric-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; }
+  .rubric-title { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .rubric-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+  .rubric-row:last-child { border-bottom: none; }
+  .rubric-dim { font-weight: 600; }
+  .rubric-scale { display: flex; gap: 6px; }
+  .scale-dot { width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+  .clip-discuss { margin-top: 20px; background: rgba(255,107,53,0.07); border: 1px solid rgba(255,107,53,0.25); padding: 16px 20px; font-size: 14px; color: var(--text); line-height: 1.6; }
+  .clip-discuss strong { color: var(--accent); }
+  .clip-good { border-top-color: var(--green); }
+  .clip-good .clip-label { color: var(--green); }
+  .clip-good-tab { background: var(--green) !important; color: var(--bg) !important; border-color: var(--green) !important; }
+
+  /* ── THEORY 1 ── */
+  .theory-screen { overflow-y: auto; padding: 32px 48px; flex-direction: column; }
+  .theory-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 2px; margin-bottom: 4px; }
+  .theory-title span { color: var(--accent); }
+  .theory-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
+  .theory-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .theory-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); padding: 24px; }
+  .theory-card.blue { border-top-color: var(--blue); }
+  .theory-card.green { border-top-color: var(--green); }
+  .theory-card-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .theory-card.blue .theory-card-label { color: var(--blue); }
+  .theory-card.green .theory-card-label { color: var(--green); }
+  .theory-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 1px; margin-bottom: 16px; }
+  .funnel-steps { display: flex; flex-direction: column; gap: 8px; }
+  .funnel-step { display: flex; align-items: center; gap: 12px; }
+  .funnel-bar-wrap { flex: 1; height: 28px; background: rgba(255,255,255,0.05); position: relative; }
+  .funnel-bar { height: 100%; display: flex; align-items: center; padding-left: 8px; font-size: 12px; font-weight: 700; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; transition: width 1s ease; }
+  .funnel-pct { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent); min-width: 44px; text-align: right; }
+  .funnel-lbl { font-size: 11px; color: var(--muted); min-width: 120px; }
+  .channels-split { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .channel-row { display: flex; align-items: center; gap: 12px; }
+  .channel-pct { font-family: 'Bebas Neue', sans-serif; font-size: 40px; line-height: 1; min-width: 64px; }
+  .channel-pct.c1 { color: var(--accent); }
+  .channel-pct.c2 { color: var(--gold); }
+  .channel-pct.c3 { color: var(--blue); }
+  .channel-info strong { display: block; font-size: 15px; font-weight: 700; }
+  .channel-info span { font-size: 13px; color: var(--muted); }
+  .distortion-box { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+  .dist-row { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+  .dist-arrow { color: var(--accent); font-size: 18px; }
+  .dist-from { color: var(--muted); font-style: italic; }
+  .theory-insight { margin-top: 20px; background: rgba(255,107,53,0.07); border: 1px solid rgba(255,107,53,0.25); padding: 16px 20px; font-size: 14px; color: var(--text); line-height: 1.6; grid-column: 1 / -1; }
+  .theory-insight strong { color: var(--accent); }
+
+  /* ── THE BRIEF ── */
+  .brief-screen { overflow-y: auto; padding: 32px 48px; flex-direction: column; }
+  .brief-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 2px; margin-bottom: 4px; }
+  .brief-title span { color: var(--accent); }
+  .brief-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+  .phase-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .phase-tab { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 2px; padding: 8px 18px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; background: transparent; color: var(--muted); }
+  .phase-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .phase-panel { display: none; }
+  .phase-panel.active { display: block; }
+  .brief-text-card { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 28px 32px; margin-bottom: 20px; }
+  .brief-header { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .brief-text { font-size: 17px; line-height: 1.85; color: var(--text); }
+  .brief-text .highlight { color: var(--gold); font-weight: 600; }
+  .brief-warning { background: rgba(255,211,42,0.07); border: 1px solid rgba(255,211,42,0.3); padding: 14px 20px; font-size: 14px; color: var(--gold); line-height: 1.5; margin-bottom: 20px; }
+  .brief-instruct { font-size: 15px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+  .brief-instruct strong { color: var(--text); }
+  .brief-timer-big { font-family: 'Bebas Neue', sans-serif; font-size: 160px; color: var(--accent); line-height: 1; text-align: center; display: block; }
+  .brief-timer-big.urgent { color: var(--accent); animation: pulse 0.5s infinite; }
+  .brief-timer-label { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 8px; }
+  .brief-ctrl-row { display: flex; gap: 16px; justify-content: center; margin-top: 20px; }
+  .debrief-qs { display: flex; flex-direction: column; gap: 12px; }
+  .debrief-q { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 16px 20px; cursor: pointer; transition: all 0.3s; }
+  .debrief-q:hover { background: rgba(255,107,53,0.05); }
+  .debrief-q.lit { border-left-color: var(--green); background: rgba(46,213,115,0.04); }
+  .debrief-q-num { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--accent); margin-bottom: 6px; }
+  .debrief-q.lit .debrief-q-num { color: var(--green); }
+  .debrief-q-text { font-size: 16px; font-weight: 600; }
+  .debrief-q-why { font-size: 13px; color: var(--muted); line-height: 1.5; max-height: 0; overflow: hidden; transition: max-height 0.4s; margin-top: 0; }
+  .debrief-q.lit .debrief-q-why { max-height: 120px; margin-top: 8px; }
+
+  /* ── THEORY 2 ── */
+  .t2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .barrier-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); padding: 20px 24px; cursor: pointer; transition: all 0.3s; }
+  .barrier-card:hover, .barrier-card.open { border-top-color: var(--green); background: rgba(46,213,115,0.04); }
+  .barrier-name { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; margin-bottom: 6px; }
+  .barrier-short { font-size: 14px; color: var(--muted); }
+  .barrier-expand { max-height: 0; overflow: hidden; transition: max-height 0.4s; }
+  .barrier-card.open .barrier-expand { max-height: 200px; }
+  .barrier-example { font-size: 13px; color: var(--text); line-height: 1.6; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .barrier-example em { color: var(--accent); font-style: normal; }
+  .solutions-box { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--green); padding: 24px; grid-column: 1 / -1; margin-top: 4px; }
+  .solutions-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
+  .solutions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .solution-item { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.5; }
+  .sol-icon { font-size: 18px; flex-shrink: 0; }
+  .solution-item strong { color: var(--green); display: block; margin-bottom: 2px; font-size: 15px; }
+
+  /* ── S2 SETUP ── */
+  .setup-screen { overflow-y: auto; padding: 32px 48px; flex-direction: column; }
+  .setup-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 2px; margin-bottom: 4px; }
+  .setup-title span { color: var(--accent); }
+  .setup-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
+  .setup-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; }
+  .brief-display { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 28px; }
+  .brief-display-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .brief-display-title { font-family: 'Bebas Neue', sans-serif; font-size: 42px; letter-spacing: 1px; margin-bottom: 16px; line-height: 1; }
+  .brief-display-title span { color: var(--accent); }
+  .brief-display-body { font-size: 16px; line-height: 1.8; color: var(--text); }
+  .brief-display-body strong { color: var(--gold); }
+  .brief-display-conditions { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+  .condition { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .condition-icon { font-size: 20px; }
+  .setup-steps { background: var(--surface); border: 1px solid var(--border); padding: 24px; }
+  .steps-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .step-list { display: flex; flex-direction: column; gap: 14px; }
+  .step-item { display: flex; align-items: flex-start; gap: 14px; }
+  .step-num { background: var(--accent); color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 20px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-text { font-size: 14px; line-height: 1.5; }
+  .step-text strong { color: var(--text); display: block; margin-bottom: 2px; font-size: 15px; }
+  .step-text span { color: var(--muted); }
+  .warning-box { background: rgba(255,211,42,0.07); border: 1px solid rgba(255,211,42,0.3); padding: 14px 20px; font-size: 14px; color: var(--gold); line-height: 1.5; margin-top: 16px; }
+
+  /* ── shared ── */
+  .prof-note { background: rgba(61,132,255,0.07); border: 1px solid rgba(61,132,255,0.2); padding: 12px 18px; font-size: 13px; color: var(--blue); line-height: 1.6; margin-top: 16px; }
+  .prof-note::before { content: '📋 PROF: '; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="session-badge">SESSION 1</div>
+    <div class="session-title">WHY MESSAGES BREAK DOWN · 14:45–16:15</div>
+  </div>
+  <div class="topbar-right">
+    <button class="nav-btn active" onclick="show('intro')">Intro</button>
+    <button class="nav-btn" onclick="show('hook')">Hook</button>
+    <button class="nav-btn" onclick="show('clips')">Clips</button>
+    <button class="nav-btn" onclick="show('theory1')">Theory 1</button>
+    <button class="nav-btn" onclick="show('brief')">The Brief</button>
+    <button class="nav-btn" onclick="show('theory2')">Theory 2</button>
+    <button class="nav-btn" onclick="show('setup')">S2 Setup</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ INTRO ═══════════════════════════════ -->
+<div class="screen intro-screen active" id="screen-intro">
+  <div class="intro-bg">COMMUNICATE</div>
+  <div class="intro-content">
+    <div class="intro-tag">Communication · Session 1 · 14:45</div>
+    <h1>YOUR MESSAGE<br><span>NEVER ARRIVES</span></h1>
+    <p>Not the way you intended. Today you find out why — and what to do about it.</p>
+    <div class="stat-row">
+      <div class="stat-item">
+        <span class="stat-num">15%</span>
+        <span class="stat-lbl">of your intentions get translated into action</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">7%</span>
+        <span class="stat-lbl">of impact comes from your actual words</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">55%</span>
+        <span class="stat-lbl">of impact is body language alone</span>
+      </div>
+    </div>
+    <div class="intro-quote">"The single biggest problem in communication is the illusion that it has taken place."<br><strong>— George Bernard Shaw</strong></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ HOOK ═══════════════════════════════ -->
+<div class="screen hook-screen" id="screen-hook">
+  <div class="hook-inner">
+    <div class="hook-tag">Before we start · 5 min</div>
+    <div class="hook-q">THINK OF A TIME<br>SOMEONE <span>COMPLETELY</span><br>MISUNDERSTOOD YOU.</div>
+    <div class="hook-sub">What happened? Why do you think it went wrong?</div>
+    <div class="hook-instruction">
+      <p>Turn to the person next to you.<br><strong>2 minutes. Tell each other one story.</strong><br>Then we open it up to the class.</p>
+    </div>
+    <div class="hook-timer-row">
+      <button class="ctrl-btn go" onclick="startHookTimer()">START</button>
+      <div class="small-timer" id="hook-timer">2:00</div>
+      <button class="ctrl-btn rst" onclick="resetHookTimer()">RESET</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ CLIPS ═══════════════════════════════ -->
+<div class="screen" id="screen-clips">
+  <div class="clips-screen">
+    <div class="clips-title">VIDEO <span>ANALYSIS</span></div>
+    <div class="clips-sub">Watch each clip. Score on the rubric. Discuss with your group.</div>
+
+    <div class="clips-tabs">
+      <button class="clip-tab active" onclick="showClip(0)">CLIP 1 — THE FAIL</button>
+      <button class="clip-tab clip-good-tab" onclick="showClip(1)">CLIP 2 — THE WIN</button>
+      <button class="clip-tab clip-tab-live" onclick="showClipLive()" style="margin-left:auto;">LIVE RESPONSES <span id="live-count-badge" style="background:rgba(165,94,234,0.3);padding:1px 7px;border-radius:10px;font-size:11px;">0</span></button>
+    </div>
+
+    <!-- Clip 1: Sweet Ballz -->
+    <div class="clip-panel active" id="clip-0">
+      <div class="clip-info">
+        <div class="clip-label">⚠ WHAT NOT TO DO</div>
+        <div class="clip-name">Sweet Ballz — Shark Tank S5</div>
+        <div class="clip-desc">Two co-founders. One product. Watch what happens when internal communication breaks down in front of the people who matter most. The sharks don't say no to the product. They say no to the people.</div>
+        <div class="clip-search">YouTube → <span>"Sweet Ballz Shark Tank"</span></div>
+        <div class="clip-watch-note">▶ Play 3–4 minutes. Stop before sharks make offers.</div>
+        <div class="clip-discuss">
+          After watching: <strong>"What exactly killed this pitch? Was it the product?"</strong><br>
+          Give groups 2 minutes. Then ask the class.
+        </div>
+        <div class="prof-note">Key moments to watch: ~1:40 the partners start contradicting each other. Non-verbal tells everything. Body posture, eye contact lost, defensive arms. Point these out after.</div>
+      </div>
+      <div class="rubric-card">
+        <div class="rubric-title">Rate as you watch · 1 (weak) → 5 (strong)</div>
+        <div class="rubric-row"><span class="rubric-dim">🎙 Voice — volume, pace, tone</span><div class="rubric-scale"><div class="scale-dot">1</div><div class="scale-dot">2</div><div class="scale-dot">3</div><div class="scale-dot">4</div><div class="scale-dot">5</div></div></div>
+        <div class="rubric-row"><span class="rubric-dim">🧍 Body language</span><div class="rubric-scale"><div class="scale-dot">1</div><div class="scale-dot">2</div><div class="scale-dot">3</div><div class="scale-dot">4</div><div class="scale-dot">5</div></div></div>
+        <div class="rubric-row"><span class="rubric-dim">📐 Structure — clear opening, clear close</span><div class="rubric-scale"><div class="scale-dot">1</div><div class="scale-dot">2</div><div class="scale-dot">3</div><div class="scale-dot">4</div><div class="scale-dot">5</div></div></div>
+        <div class="rubric-row"><span class="rubric-dim">🤝 Connection — do you believe them?</span><div class="rubric-scale"><div class="scale-dot">1</div><div class="scale-dot">2</div><div class="scale-dot">3</div><div class="scale-dot">4</div><div class="scale-dot">5</div></div></div>
+        <div class="rubric-row"><span class="rubric-dim">💰 Would you invest?</span><span style="color:var(--muted);font-size:14px">YES &nbsp;/&nbsp; NO &nbsp;/&nbsp; MAYBE</span></div>
+      </div>
+    </div>
+
+    <!-- Clip 2: Scrub Daddy -->
+    <div class="clip-panel" id="clip-1">
+      <div class="clip-info clip-good">
+        <div class="clip-label" style="color:var(--green)">✓ WHAT GREAT LOOKS LIKE</div>
+        <div class="clip-name">Scrub Daddy — Shark Tank S4</div>
+        <div class="clip-desc">Aaron Krause. Considered one of the best pitches in Shark Tank history. Same rubric. Notice what he does in the first 30 seconds. Notice how he handles questions. Notice what you feel.</div>
+        <div class="clip-search">YouTube → <span>"Scrub Daddy Shark Tank original pitch"</span></div>
+        <div class="clip-watch-note">▶ Play 4–5 minutes. Stop before deal is struck.</div>
+        <div class="clip-discuss" style="border-color:rgba(46,213,115,0.3);background:rgba(46,213,115,0.05)">
+          After watching: <strong style="color:var(--green)">"What did he do in the first 30 seconds that Clip 1 didn't?"</strong><br>
+          Groups 2 min → class share. Then professor names the concepts.
+        </div>
+        <div class="prof-note">Key moments: Opening story (not "hi I'm Aaron"). Product demo is physical, engaging, memorable. He answers every question with confidence, not defensiveness. Perfect example of primacy effect.</div>
+      </div>
+      <div class="rubric-card">
+        <div class="rubric-title">Same rubric · 1 (weak) → 5 (strong)</div>
+        <div class="rubric-row"><span class="rubric-dim">🎙 Voice — volume, pace, tone</span><div class="rubric-scale"><div class="scale-dot">1</div><div class="scale-dot">2</div><div class="scale-dot">3</div><div class="scale-dot">4</div><div class="scale-dot">5</div></div></div>
+        <div class="rubric-row"><span class="rubric-dim">🧍 Body language</span><div class="rubric-scale"><div class="scale-dot">1</div><div class="scale-dot">2</div><div class="scale-dot">3</div><div class="scale-dot">4</div><div class="scale-dot">5</div></div></div>
+        <div class="rubric-row"><span class="rubric-dim">📐 Structure — clear opening, clear close</span><div class="rubric-scale"><div class="scale-dot">1</div><div class="scale-dot">2</div><div class="scale-dot">3</div><div class="scale-dot">4</div><div class="scale-dot">5</div></div></div>
+        <div class="rubric-row"><span class="rubric-dim">🤝 Connection — do you believe them?</span><div class="rubric-scale"><div class="scale-dot">1</div><div class="scale-dot">2</div><div class="scale-dot">3</div><div class="scale-dot">4</div><div class="scale-dot">5</div></div></div>
+        <div class="rubric-row"><span class="rubric-dim">💰 Would you invest?</span><span style="color:var(--muted);font-size:14px">YES &nbsp;/&nbsp; NO &nbsp;/&nbsp; MAYBE</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ THEORY 1 ═══════════════════════════════ -->
+<div class="screen" id="screen-theory1">
+  <div class="theory-screen">
+    <div class="theory-title">THEORY FLASH <span>1</span></div>
+    <div class="theory-sub">Now you've seen it. Here's why it happens. 8 minutes. Professor talks — this is the framework.</div>
+
+    <div class="theory-grid">
+      <div class="theory-card">
+        <div class="theory-card-label">The Distortion Funnel</div>
+        <h3>Where Your Message Goes</h3>
+        <div class="funnel-steps">
+          <div class="funnel-step">
+            <span class="funnel-lbl">What you intend</span>
+            <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:100%;background:rgba(255,107,53,0.7);color:#fff">INTENT</div></div>
+            <span class="funnel-pct">100%</span>
+          </div>
+          <div class="funnel-step">
+            <span class="funnel-lbl">What you actually say</span>
+            <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:90%;background:rgba(255,107,53,0.58);color:#fff">SAY</div></div>
+            <span class="funnel-pct">90%</span>
+          </div>
+          <div class="funnel-step">
+            <span class="funnel-lbl">What they hear + make sense of</span>
+            <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:50%;background:rgba(255,107,53,0.42);color:#fff">HEAR</div></div>
+            <span class="funnel-pct">50%</span>
+          </div>
+          <div class="funnel-step">
+            <span class="funnel-lbl">What they remember</span>
+            <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:35%;background:rgba(255,107,53,0.28);color:#fff">KEEP</div></div>
+            <span class="funnel-pct">35%</span>
+          </div>
+          <div class="funnel-step">
+            <span class="funnel-lbl">What gets acted on</span>
+            <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:15%;background:rgba(255,107,53,0.18);color:#ff6b35">ACT</div></div>
+            <span class="funnel-pct" style="color:var(--accent)">15%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="theory-card blue">
+        <div class="theory-card-label">The 7 / 38 / 55 Rule</div>
+        <h3>What Actually Carries Your Message</h3>
+        <div class="channels-split">
+          <div class="channel-row">
+            <span class="channel-pct c1">7%</span>
+            <div class="channel-info"><strong>Words</strong><span>The actual content you say</span></div>
+          </div>
+          <div class="channel-row">
+            <span class="channel-pct c2">38%</span>
+            <div class="channel-info"><strong>Voice</strong><span>Volume, tone, pace, pitch, pauses</span></div>
+          </div>
+          <div class="channel-row">
+            <span class="channel-pct c3">55%</span>
+            <div class="channel-info"><strong>Body language</strong><span>Posture, gestures, eye contact, expression</span></div>
+          </div>
+        </div>
+        <div style="margin-top:16px;font-size:13px;color:var(--muted);line-height:1.5">This is why Sweet Ballz failed even though the product was fine.<br>And why Jobs can make a room go silent before saying a word.</div>
+      </div>
+
+      <div class="theory-card green">
+        <div class="theory-card-label">The Sender–Receiver Gap</div>
+        <h3>Where Distortion Enters</h3>
+        <div class="distortion-box">
+          <div class="dist-row"><span class="dist-arrow">→</span><span>You have an <strong>intention</strong></span></div>
+          <div class="dist-row"><span class="dist-arrow">→</span><span>You <strong>encode</strong> it into words + body</span></div>
+          <div class="dist-row"><span class="dist-arrow">→</span><span>It travels through a <strong>channel</strong> (+ noise)</span></div>
+          <div class="dist-row"><span class="dist-arrow">→</span><span>They <strong>decode</strong> it through their own filters</span></div>
+          <div class="dist-row"><span class="dist-arrow">→</span><span>They <strong>interpret</strong> it based on their context</span></div>
+          <div class="dist-row" style="color:var(--green)"><span class="dist-arrow" style="color:var(--green)">≠</span><span><strong>Their understanding ≠ your intention</strong></span></div>
+        </div>
+      </div>
+
+      <div class="theory-insight">
+        <strong>The big insight:</strong> The gap between what you intend and what they understand is <strong>your responsibility to close</strong>. Not theirs. The sender owns the effectiveness of the communication. Every great communicator understands this.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ THE BRIEF ═══════════════════════════════ -->
+<div class="screen" id="screen-brief">
+  <div class="brief-screen">
+    <div class="brief-title">THE <span>BRIEF</span></div>
+    <div class="brief-sub">A real-world communication exercise. The professor will read the brief once. Your job: capture it.</div>
+
+    <div class="phase-tabs">
+      <button class="phase-tab active" onclick="showPhase(0)">1 · THE BRIEF</button>
+      <button class="phase-tab" onclick="showPhase(1)">2 · EXECUTE</button>
+      <button class="phase-tab" onclick="showPhase(2)">3 · COMPARE</button>
+      <button class="phase-tab" onclick="showPhase(3)">4 · DEBRIEF</button>
+    </div>
+
+    <!-- Phase 1: Show the brief -->
+    <div class="phase-panel active" id="brief-phase-0">
+      <div class="brief-warning">⚠ Professor reads this aloud. Class listens. No recording. No notes until it's over.</div>
+      <div class="brief-text-card">
+        <div class="brief-header">Incoming message from your manager · Read once · No replay</div>
+        <div class="brief-text">
+          "Alright, listen carefully — I'm only saying this once. Our product team has flagged an issue with the <span class="highlight">Milan launch</span>. The local influencer campaign isn't performing and we need a fix before <span class="highlight">Q3 closes</span>. Sofia from marketing has already spoken to two agencies — the second one, Vivid Creative, looks promising but they're quoting <span class="highlight">€18K</span>, which is over budget. The CFO said <span class="highlight">€15K max</span> unless we can justify ROI clearly. Sofia needs an answer <span class="highlight">by Thursday</span>.<br><br>
+          Meanwhile, logistics in Rome — talk to <span class="highlight">Marco</span> — needs the <span class="highlight">final SKU list</span> no later than three weeks before launch. Work backwards from the launch date. Also, the CEO is presenting to the board <span class="highlight">on the 20th</span> and needs a <span class="highlight">one-pager</span>: key numbers and the go-to-market narrative. Keep it simple.<br><br>
+          One more thing: <span class="highlight">legal</span> needs to sign off on any campaign assets before they go live, so loop them in early. And the regional managers in the north need to align on the rollout — they've been left out and they're not happy about it.<br><br>
+          Can you pull all of this together?"
+        </div>
+      </div>
+      <div class="prof-note">Read at normal speaking pace. Don't slow down or over-emphasize. That's the point. After reading: "Now, without speaking to your group — write down what you remember. 2 minutes."</div>
+    </div>
+
+    <!-- Phase 2: Execute timer -->
+    <div class="phase-panel" id="brief-phase-1">
+      <div class="brief-instruct"><strong>Write down everything you captured from the brief.</strong><br><span>Individually first — no group discussion yet. What were the key action items? Who? What? By when?</span></div>
+      <div class="brief-timer-label">Individual capture</div>
+      <div class="brief-timer-big" id="brief-timer">2:00</div>
+      <div class="brief-ctrl-row">
+        <button class="ctrl-btn go" onclick="startBriefTimer(2)">START 2 MIN</button>
+        <button class="ctrl-btn rst" onclick="resetBriefTimer()">RESET</button>
+      </div>
+      <div style="margin-top:24px">
+        <div class="brief-instruct"><strong>Then: compare with your group.</strong><br><span>What did each person write? What did different people catch? What did everyone miss?</span></div>
+        <div class="brief-timer-label" style="margin-top:16px">Group comparison</div>
+        <div class="brief-ctrl-row">
+          <button class="ctrl-btn go" onclick="startBriefTimer(5)">START 5 MIN</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3: Compare -->
+    <div class="phase-panel" id="brief-phase-2">
+      <div class="brief-text-card" style="border-left-color:var(--gold)">
+        <div class="brief-header" style="color:var(--gold)">What the brief actually contained</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+          <div>
+            <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Action Items</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.5">
+              <li>→ Go/no-go on Vivid Creative agency (Sofia, by Thursday)</li>
+              <li>→ Justify ROI to get CFO to flex budget past €15K</li>
+              <li>→ Get final SKU list to Marco in Rome (3 weeks before launch)</li>
+              <li>→ Write one-pager for CEO board presentation (by the 20th)</li>
+              <li>→ Loop legal into campaign sign-off</li>
+              <li>→ Align northern regional managers on rollout plan</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Key Numbers / Dates</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.5">
+              <li>→ Budget max: <strong>€15K</strong> (maybe €18K with ROI case)</li>
+              <li>→ Sofia deadline: <strong>Thursday</strong></li>
+              <li>→ SKU list: <strong>3 weeks before launch</strong></li>
+              <li>→ Board presentation: <strong>the 20th</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="prof-note">Show this after groups have compared. Ask: "How many items did you get? Did any group get all 6 action items? What did most people miss?" Usually everyone gets the budget and misses legal / regional managers.</div>
+    </div>
+
+    <!-- Phase 4: Debrief -->
+    <div class="phase-panel" id="brief-phase-3">
+      <div class="brief-sub">Click each question to reveal what to explore. 8 minutes total.</div>
+      <div class="debrief-qs">
+        <div class="debrief-q" onclick="this.classList.toggle('lit')">
+          <div class="debrief-q-num">Q1 · INFORMATION OVERLOAD</div>
+          <div class="debrief-q-text">Why did nobody get everything?</div>
+          <div class="debrief-q-why">The brief had too many items, too many people, too many deadlines — all at the same priority level. When everything is urgent, nothing is. Our brains drop items under information overload. This happens in every company every day — in meetings, in Slack, in emails.</div>
+        </div>
+        <div class="debrief-q" onclick="this.classList.toggle('lit')">
+          <div class="debrief-q-num">Q2 · SELECTIVE PERCEPTION</div>
+          <div class="debrief-q-text">What did different people in your group capture that the others didn't?</div>
+          <div class="debrief-q-why">We hear what our background prepares us to hear. Finance students catch the €15K. Marketing students catch the agency name. People from northern Italy catch the regional manager issue. Same message — completely different interpretation. This is selective perception.</div>
+        </div>
+        <div class="debrief-q" onclick="this.classList.toggle('lit')">
+          <div class="debrief-q-num">Q3 · CHANNEL CHOICE</div>
+          <div class="debrief-q-text">Would this brief have been better as an email?</div>
+          <div class="debrief-q-why">Yes — for complex, multi-action messages with deadlines and names, written is better. Verbal 1-way works for simple urgent messages (the Hawaii missile alert example). Matching channel to message complexity is a core management skill.</div>
+        </div>
+        <div class="debrief-q" onclick="this.classList.toggle('lit')">
+          <div class="debrief-q-num">Q4 · THE REAL LESSON</div>
+          <div class="debrief-q-text">Who is responsible when the message doesn't arrive?</div>
+          <div class="debrief-q-why">The sender. Always. In a company, if the person who gave you the brief is annoyed that you missed something — that's on them. The most effective communicators know this: you check for understanding, you choose the right channel, you repeat what matters, you ask "what did you hear?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ THEORY 2 ═══════════════════════════════ -->
+<div class="screen" id="screen-theory2">
+  <div class="theory-screen">
+    <div class="theory-title">THEORY FLASH <span>2</span></div>
+    <div class="theory-sub">Four barriers. Four ways to beat them. Click each card.</div>
+
+    <div class="t2-grid">
+      <div class="barrier-card" onclick="this.classList.toggle('open')">
+        <div class="barrier-name">Selective Perception</div>
+        <div class="barrier-short">We hear what we expect to hear</div>
+        <div class="barrier-expand">
+          <div class="barrier-example">Your background, assumptions, and current concerns act as filters. Two people in the same meeting can leave with opposite interpretations. <em>You heard "Sofia needs an answer." They heard "get the SKU list to Marco."</em></div>
+        </div>
+      </div>
+      <div class="barrier-card" onclick="this.classList.toggle('open')">
+        <div class="barrier-name">Information Overload</div>
+        <div class="barrier-short">Too much → the brain drops things</div>
+        <div class="barrier-expand">
+          <div class="barrier-example">When inflow exceeds processing capacity, important info gets lost. <em>6 action items in 90 seconds, at normal pace, with no context = most of them gone.</em> Every team meeting runs this risk.</div>
+        </div>
+      </div>
+      <div class="barrier-card" onclick="this.classList.toggle('open')">
+        <div class="barrier-name">Assumptions</div>
+        <div class="barrier-short">We fill gaps with our own version of reality</div>
+        <div class="barrier-expand">
+          <div class="barrier-example">When we don't fully understand, we don't ask — we guess. And we're often wrong. <em>"The 20th" — which month? Which year? Which time zone? We assume we know.</em></div>
+        </div>
+      </div>
+      <div class="barrier-card" onclick="this.classList.toggle('open')">
+        <div class="barrier-name">Emotions & Stress</div>
+        <div class="barrier-short">How you feel changes what you hear</div>
+        <div class="barrier-expand">
+          <div class="barrier-example">A stressed or distracted receiver misses up to 40% more. <em>The manager who delivers a brief at the end of a meeting when everyone is already half-checked-out gets the worst results.</em></div>
+        </div>
+      </div>
+
+      <div class="solutions-box">
+        <div class="solutions-label">How great communicators beat these barriers</div>
+        <div class="solutions-grid">
+          <div class="solution-item">
+            <span class="sol-icon">🔁</span>
+            <div><strong>Summarize back</strong>After receiving complex info, say: "So what I heard is…" This closes the gap immediately.</div>
+          </div>
+          <div class="solution-item">
+            <span class="sol-icon">✂️</span>
+            <div><strong>Less is more</strong>One clear message beats five scattered ones. Pick the most important thing and make sure THAT lands.</div>
+          </div>
+          <div class="solution-item">
+            <span class="sol-icon">📡</span>
+            <div><strong>Match channel to message</strong>Complex, multi-step info → written. Urgent, simple → verbal. Sensitive → face to face.</div>
+          </div>
+          <div class="solution-item">
+            <span class="sol-icon">🎯</span>
+            <div><strong>Know your audience</strong>What do they already know? What do they care about? Start from where they are, not where you are.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ S2 SETUP ═══════════════════════════════ -->
+<div class="screen" id="screen-setup">
+  <div class="setup-screen">
+    <div class="setup-title">SESSION 2 <span>SETUP</span></div>
+    <div class="setup-sub">During the break, meet your group. Start thinking. Session 2 starts at 16:30.</div>
+
+    <div class="setup-grid">
+      <div class="brief-display">
+        <div class="brief-display-tag">Your Mission · Session 2</div>
+        <div class="brief-display-title">YOU'RE GOING TO<br><span>SHARK TANK.</span></div>
+        <div class="brief-display-body">
+          You are the <strong>founders of a startup</strong>.<br>
+          You have <strong>3 minutes</strong> to convince the sharks to invest <strong>€100,000</strong> in your company.<br><br>
+          Your classmates are the sharks. They will ask questions. They will vote.<br><br>
+          You will build a <strong>landing page</strong> on Lovable — your company's public face. The sharks will see it before you walk in.
+        </div>
+        <div class="brief-display-conditions">
+          <div class="condition"><span class="condition-icon">👥</span><span>Groups of 5 — <strong>pre-assigned by professor</strong></span></div>
+          <div class="condition"><span class="condition-icon">🏢</span><span>Invent your startup — any industry</span></div>
+          <div class="condition"><span class="condition-icon">💼</span><span>Each member gets a role: CEO, CTO, CMO, CFO, CPO</span></div>
+          <div class="condition"><span class="condition-icon">💰</span><span>Decide your equity offer — what % for €100K?</span></div>
+          <div class="condition"><span class="condition-icon">🖥️</span><span>1, 2, or all members can present — your choice</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="setup-steps">
+          <div class="steps-label">What happens in Session 2</div>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-text"><strong>Steve Jobs + Theory Flash</strong><span>Watch how the best do it. Learn the framework. (15 min)</span></div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-text"><strong>AI Planning (ChatGPT / Claude)</strong><span>Structure everything BEFORE opening Lovable. (15 min)</span></div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-text"><strong>Build in Lovable</strong><span>One great prompt → your landing page. (25 min)</span></div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-text"><strong>Practice + Submit</strong><span>Rehearse your pitch. Submit your URL. (10 min)</span></div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">5</div>
+              <div class="step-text"><strong>Shark Tank</strong><span>Selected groups pitch to the class. Sharks vote. (20 min)</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="warning-box">⚡ During the break: meet your group, pick a startup idea, assign roles. You won't have time to brainstorm from scratch in Session 2.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE FEED panel -->
+  <div class="clip-panel-live" id="clip-live">
+    <div class="live-left">
+      <div class="live-count-box">
+        <div class="live-count-num" id="live-count-main">0</div>
+        <div class="live-count-label">responses received</div>
+      </div>
+      <div class="live-qr-box">
+        <div class="live-qr-icon">⬜</div>
+        <div>ADD QR CODE<br>submit_s1.html</div>
+      </div>
+    </div>
+    <div class="live-right">
+      <div class="live-wordcloud" id="live-wordcloud">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Waiting for submissions...</div>
+      </div>
+      <div class="live-feed" id="live-feed">
+        <div style="padding:16px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Responses appear here as students submit →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showClip(idx) {
+  document.querySelectorAll('.clip-panel, .clip-panel-live').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.clip-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('clip-' + idx).classList.add('active');
+  document.querySelectorAll('.clip-tab')[idx].classList.add('active');
+}
+
+function showClipLive() {
+  document.querySelectorAll('.clip-panel, .clip-panel-live').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.clip-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('clip-live').classList.add('active');
+  document.querySelectorAll('.clip-tab')[2].classList.add('active');
+}
+
+// ── Live Firebase feed ──
+const liveColors = ['#a55eea','#ff6b35','#2ed573','#ffd32a','#3d84ff','#ff4757'];
+let livesubmissions = {}, liveSeenKeys = new Set();
+
+function livePickColor(w) {
+  let h = 0; for (let i=0;i<w.length;i++) h = w.charCodeAt(i)+((h<<5)-h);
+  return liveColors[Math.abs(h)%liveColors.length];
+}
+
+function liveEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function liveRebuildCloud() {
+  const freq = {};
+  Object.values(livesubmissions || livesubmissions).forEach(s => {
+    if (s.field3) { const w=s.field3.trim().toUpperCase(); if(w) freq[w]=(freq[w]||0)+1; }
+  });
+  const entries = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,30);
+  if (!entries.length) return;
+  const max = entries[0][1];
+  const c = document.getElementById('live-wordcloud');
+  c.innerHTML = '';
+  entries.forEach(([w,n]) => {
+    const chip = document.createElement('div');
+    chip.className = 'live-word-chip';
+    chip.textContent = w;
+    chip.style.fontSize = (16 + (n/max)*40)+'px';
+    chip.style.color = livePickColor(w);
+    c.appendChild(chip);
+  });
+}
+
+(function initLive() {
+  if (!window.firebaseConfig) { setTimeout(initLive, 300); return; }
+  if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+  const db = firebase.database();
+  db.ref('communication-s1').on('child_added', snap => {
+    const key = snap.key, data = snap.val();
+    if (!data || liveSeenKeys.has(key)) return;
+    liveSeenKeys.add(key);
+    livesubmissions[key] = data;
+    // update count
+    const n = Object.keys(livesubmissions).length;
+    document.getElementById('live-count-main').textContent = n;
+    document.getElementById('live-count-badge').textContent = n;
+    // add to feed
+    const feed = document.getElementById('live-feed');
+    const item = document.createElement('div');
+    item.className = 'live-feed-item new-entry';
+    item.innerHTML = `<div class="live-feed-name">${liveEsc(data.name||'—')}</div>
+      <div class="live-feed-word">${liveEsc(data.field3||'')}</div>
+      <div class="live-feed-text">${liveEsc((data.field1||'').slice(0,80))}${(data.field1||'').length>80?'…':''}</div>`;
+    feed.insertBefore(item, feed.firstChild);
+    liveRebuildCloud();
+  });
+})();
+var livesubmissions = {};
+
+function showPhase(idx) {
+  document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.phase-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('brief-phase-' + idx).classList.add('active');
+  document.querySelectorAll('.phase-tab')[idx].classList.add('active');
+}
+
+// Hook timer (2 min)
+let hookInterval = null, hookSecs = 120;
+function startHookTimer() {
+  if (hookInterval) { clearInterval(hookInterval); hookInterval = null; document.querySelector('.ctrl-btn.go').textContent = 'START'; return; }
+  document.querySelector('.ctrl-btn.go').textContent = 'PAUSE';
+  hookInterval = setInterval(() => {
+    hookSecs--;
+    const el = document.getElementById('hook-timer');
+    el.textContent = Math.floor(hookSecs/60) + ':' + String(hookSecs%60).padStart(2,'0');
+    if (hookSecs <= 30) el.classList.add('urgent');
+    if (hookSecs <= 0) { clearInterval(hookInterval); hookInterval = null; el.textContent = 'TIME'; }
+  }, 1000);
+}
+function resetHookTimer() {
+  clearInterval(hookInterval); hookInterval = null;
+  hookSecs = 120;
+  const el = document.getElementById('hook-timer');
+  el.textContent = '2:00'; el.classList.remove('urgent');
+  document.querySelector('.ctrl-btn.go').textContent = 'START';
+}
+
+// Brief timer
+let briefInterval = null, briefSecs = 120;
+function startBriefTimer(mins) {
+  clearInterval(briefInterval);
+  briefSecs = mins * 60;
+  const el = document.getElementById('brief-timer');
+  el.classList.remove('urgent');
+  el.textContent = mins + ':00';
+  briefInterval = setInterval(() => {
+    briefSecs--;
+    el.textContent = Math.floor(briefSecs/60) + ':' + String(briefSecs%60).padStart(2,'0');
+    if (briefSecs <= 30) el.classList.add('urgent');
+    if (briefSecs <= 0) { clearInterval(briefInterval); briefInterval = null; el.textContent = 'TIME'; }
+  }, 1000);
+}
+function resetBriefTimer() {
+  clearInterval(briefInterval); briefInterval = null;
+  briefSecs = 120;
+  const el = document.getElementById('brief-timer');
+  el.textContent = '2:00'; el.classList.remove('urgent');
+}
+</script>
+</body>
+</html>

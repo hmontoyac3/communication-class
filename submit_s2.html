@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Your Landing Page | Communication S2</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a12; --surface: #13131f; --border: #2a2a3e; --text: #e8e8f0;
+    --muted: #6b6b8a; --accent: #a55eea;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-top: 4px solid var(--accent); max-width: 480px; width: 100%; padding: 36px 32px; }
+  .badge { background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; padding: 3px 12px; display: inline-block; margin-bottom: 16px; font-weight: 700; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 2px; line-height: 0.95; margin-bottom: 6px; }
+  h1 span { color: var(--accent); }
+  .sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+  .field { margin-bottom: 18px; }
+  label { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  input, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; padding: 10px 14px; outline: none; transition: border-color 0.2s; }
+  input:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 70px; }
+  .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; letter-spacing: 3px; padding: 14px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; margin-top: 8px; }
+  .submit-btn:hover { opacity: 0.85; }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .success { display: none; text-align: center; padding: 32px 0; }
+  .success-icon { font-size: 48px; margin-bottom: 16px; }
+  .success h2 { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 2px; color: var(--accent); margin-bottom: 8px; }
+  .success p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .error-msg { display: none; color: #ff4757; font-size: 13px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">SESSION 2 — LOVABLE SUBMIT</div>
+  <h1>YOUR<br><span>SITE.</span></h1>
+  <div class="sub">Submit your Lovable landing page URL and team details. The professor sees all submissions live.</div>
+
+  <div id="form-section">
+    <div class="field">
+      <label>Group / Company Name *</label>
+      <input type="text" id="f-company" placeholder="e.g. GreenBite" />
+    </div>
+    <div class="field">
+      <label>Team Members (names, comma-separated) *</label>
+      <input type="text" id="f-names" placeholder="Sofia, Marco, Lucia, Alex, Jana" />
+    </div>
+    <div class="field">
+      <label>Lovable Landing Page URL *</label>
+      <input type="url" id="f-url" placeholder="https://your-startup.lovable.app" />
+    </div>
+    <div class="field">
+      <label>Your Pitch in One Sentence</label>
+      <textarea id="f-pitch" placeholder="We help X do Y so that Z."></textarea>
+    </div>
+    <div class="error-msg" id="err-msg">Please fill in all required fields.</div>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">SUBMIT LANDING PAGE →</button>
+  </div>
+
+  <div class="success" id="success-section">
+    <div class="success-icon">✓</div>
+    <h2>SUBMITTED!</h2>
+    <p>Your landing page is now visible on the professor's screen.<br>Go practice your pitch — you've got minutes left.</p>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+  firebase.initializeApp(window.firebaseConfig);
+  const db = firebase.database();
+
+  function submitForm() {
+    const company = document.getElementById('f-company').value.trim();
+    const names = document.getElementById('f-names').value.trim();
+    const url = document.getElementById('f-url').value.trim();
+    const pitch = document.getElementById('f-pitch').value.trim();
+
+    if (!company || !names || !url) {
+      document.getElementById('err-msg').style.display = 'block';
+      return;
+    }
+    document.getElementById('err-msg').style.display = 'none';
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('submit-btn').textContent = 'SUBMITTING...';
+
+    const ref = db.ref('communication-s2/' + Date.now());
+    ref.set({
+      company,
+      names,
+      url,
+      pitch,
+      timestamp: new Date().toISOString()
+    }).then(() => {
+      document.getElementById('form-section').style.display = 'none';
+      document.getElementById('success-section').style.display = 'block';
+    }).catch(err => {
+      document.getElementById('submit-btn').disabled = false;
+      document.getElementById('submit-btn').textContent = 'SUBMIT LANDING PAGE →';
+      document.getElementById('err-msg').textContent = 'Error: ' + err.message;
+      document.getElementById('err-msg').style.display = 'block';
+    });
+  }
+</script>
+</body>
+</html>

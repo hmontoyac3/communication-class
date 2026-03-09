@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SESSION 2 — Build Your Pitch | Communication</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a12; --surface: #13131f; --border: #2a2a3e; --text: #e8e8f0;
+    --muted: #6b6b8a; --accent: #ff6b35; --blue: #3d84ff; --green: #2ed573;
+    --gold: #ffd32a; --purple: #a55eea; --red: #ff4757;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .session-badge { background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; padding: 4px 12px; font-weight: 700; }
+  .session-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .topbar-right { display: flex; gap: 6px; flex-wrap: wrap; }
+  .nav-btn { background: var(--border); color: var(--text); border: none; font-family: 'Barlow', sans-serif; font-size: 11px; padding: 6px 12px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; }
+  .nav-btn:hover, .nav-btn.active { background: var(--accent); color: #fff; }
+
+  .screen { display: none; flex: 1; overflow: hidden; }
+  .screen.active { display: flex; flex-direction: column; }
+  .scroll-screen { overflow-y: auto; }
+
+  /* ── INTRO ── */
+  .intro-screen { justify-content: center; align-items: center; padding: 40px; }
+  .intro-inner { max-width: 860px; width: 100%; }
+  .intro-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+  .intro-title { font-family: 'Bebas Neue', sans-serif; font-size: 80px; line-height: 0.9; letter-spacing: 2px; margin-bottom: 32px; }
+  .intro-title span { color: var(--accent); }
+  .arc-row { display: flex; gap: 0; margin-bottom: 32px; align-items: stretch; }
+  .arc-step { flex: 1; background: var(--surface); border: 1px solid var(--border); padding: 20px; text-align: center; position: relative; }
+  .arc-step.current { background: rgba(255,107,53,0.08); border-color: var(--accent); }
+  .arc-step-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+  .arc-step-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; }
+  .arc-step.current .arc-step-name { color: var(--accent); }
+  .arc-arrow { display: flex; align-items: center; padding: 0 8px; color: var(--muted); font-size: 20px; }
+  .intro-agenda { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .agenda-item { background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; display: flex; gap: 16px; align-items: flex-start; }
+  .agenda-time { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 1px; color: var(--accent); min-width: 60px; font-weight: 700; padding-top: 2px; }
+  .agenda-desc { font-size: 14px; line-height: 1.5; }
+  .agenda-desc strong { color: var(--text); display: block; margin-bottom: 2px; }
+
+  /* ── JOBS CLIP ── */
+  .jobs-screen { justify-content: center; align-items: center; padding: 40px; }
+  .jobs-inner { max-width: 900px; width: 100%; }
+  .jobs-title { font-family: 'Bebas Neue', sans-serif; font-size: 64px; letter-spacing: 2px; margin-bottom: 6px; }
+  .jobs-title span { color: var(--accent); }
+  .jobs-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; }
+  .clip-box { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 24px 28px; margin-bottom: 28px; }
+  .clip-box h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+  .clip-box p { font-size: 15px; line-height: 1.6; color: var(--muted); }
+  .clip-box strong { color: var(--text); }
+  .watch-instructions { font-size: 15px; color: var(--text); margin-bottom: 24px; line-height: 1.6; background: rgba(255,107,53,0.06); border: 1px solid rgba(255,107,53,0.2); padding: 16px 20px; }
+  .jobs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .jobs-card { background: var(--surface); border: 1px solid var(--border); padding: 20px; cursor: pointer; transition: all 0.3s; }
+  .jobs-card:hover { background: rgba(255,107,53,0.04); border-color: var(--accent); }
+  .jobs-card.revealed { border-top: 3px solid var(--green); }
+  .jobs-card-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .jobs-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .jobs-card-detail { font-size: 13px; color: var(--muted); line-height: 1.5; max-height: 0; overflow: hidden; transition: max-height 0.4s; }
+  .jobs-card.revealed .jobs-card-detail { max-height: 200px; }
+  .jobs-card.revealed .jobs-card-label { color: var(--green); }
+
+  /* ── THEORY ── */
+  .theory-screen { overflow-y: auto; padding: 32px 40px; }
+  .theory-inner { max-width: 900px; margin: 0 auto; }
+  .theory-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .theory-title { font-family: 'Bebas Neue', sans-serif; font-size: 56px; letter-spacing: 2px; margin-bottom: 28px; }
+  .theory-title span { color: var(--accent); }
+  .theory-tabs { display: flex; gap: 0; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .theory-tab { background: none; border: none; color: var(--muted); font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .theory-tab:hover { color: var(--text); }
+  .theory-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .theory-panel { display: none; }
+  .theory-panel.active { display: block; }
+
+  /* pitch structure */
+  .pitch-steps { display: flex; flex-direction: column; gap: 12px; }
+  .pitch-step { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 18px 22px; display: flex; gap: 20px; align-items: flex-start; }
+  .pitch-step-num { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--accent); line-height: 1; min-width: 32px; }
+  .pitch-step-body h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .pitch-step-body p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .pitch-step-body em { color: var(--gold); font-style: normal; }
+
+  /* cuddy matrix */
+  .cuddy-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin: 20px 0; position: relative; }
+  .cuddy-quad { padding: 24px; min-height: 120px; }
+  .cuddy-quad.tl { background: rgba(61,132,255,0.08); border: 1px solid rgba(61,132,255,0.25); }
+  .cuddy-quad.tr { background: rgba(46,213,115,0.1); border: 1px solid rgba(46,213,115,0.3); }
+  .cuddy-quad.bl { background: rgba(255,71,87,0.06); border: 1px solid rgba(255,71,87,0.2); }
+  .cuddy-quad.br { background: rgba(165,94,234,0.08); border: 1px solid rgba(165,94,234,0.2); }
+  .cuddy-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+  .cuddy-quad.tl .cuddy-label { color: #3d84ff; }
+  .cuddy-quad.tr .cuddy-label { color: var(--green); }
+  .cuddy-quad.bl .cuddy-label { color: var(--red); }
+  .cuddy-quad.br .cuddy-label { color: var(--purple); }
+  .cuddy-quad h4 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .cuddy-quad p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .cuddy-axes { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .cuddy-axis-side { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+  /* non-verbal */
+  .nv-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .nv-card { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
+  .nv-pct { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--accent); line-height: 1; }
+  .nv-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .nv-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .nv-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .primacy-box { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; }
+  .primacy-box h4 { font-weight: 700; margin-bottom: 8px; }
+  .primacy-bar { display: flex; height: 36px; margin: 12px 0; }
+  .primacy-bar-start { background: var(--green); display: flex; align-items: center; padding: 0 12px; font-size: 12px; font-weight: 700; color: var(--bg); letter-spacing: 1px; }
+  .primacy-bar-mid { background: rgba(255,255,255,0.05); flex: 1; display: flex; align-items: center; padding: 0 12px; font-size: 12px; color: var(--muted); }
+  .primacy-bar-end { background: var(--accent); display: flex; align-items: center; padding: 0 12px; font-size: 12px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+
+  /* ── AI PLAN ── */
+  .aiplan-screen { justify-content: center; align-items: center; padding: 32px 40px; }
+  .aiplan-inner { max-width: 860px; width: 100%; }
+  .phase-badge { display: inline-block; background: var(--blue); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 3px; padding: 4px 14px; margin-bottom: 14px; font-weight: 700; }
+  .aiplan-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 2px; line-height: 0.9; margin-bottom: 8px; }
+  .aiplan-title span { color: var(--blue); }
+  .aiplan-sub { font-size: 16px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+  .warning-box { background: rgba(255,71,87,0.08); border: 2px solid var(--red); padding: 16px 22px; margin-bottom: 28px; font-size: 15px; font-weight: 700; letter-spacing: 0.5px; color: var(--text); }
+  .warning-box span { color: var(--red); }
+  .aiplan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .aiplan-card { background: var(--surface); border: 1px solid var(--border); padding: 20px; }
+  .aiplan-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; }
+  .aiplan-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .aiplan-card ul li { font-size: 14px; color: var(--muted); padding-left: 16px; position: relative; line-height: 1.4; }
+  .aiplan-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--blue); }
+  .aiplan-card ul li strong { color: var(--text); }
+  .timer-block { background: var(--surface); border: 2px solid var(--blue); padding: 24px; display: flex; align-items: center; justify-content: space-between; }
+  .timer-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--blue); margin-bottom: 4px; }
+  .timer-display { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--blue); line-height: 1; }
+  .timer-btns { display: flex; gap: 8px; }
+  .timer-btn { background: var(--blue); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 2px; padding: 10px 20px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; }
+  .timer-btn:hover { opacity: 0.8; }
+  .timer-btn.secondary { background: var(--border); color: var(--muted); }
+  .timer-btn.secondary:hover { background: var(--surface); color: var(--text); }
+
+  /* ── LOVABLE ── */
+  .lovable-screen { overflow-y: auto; padding: 32px 40px; }
+  .lovable-inner { max-width: 900px; margin: 0 auto; }
+  .lovable-phase-badge { display: inline-block; background: var(--purple); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 3px; padding: 4px 14px; margin-bottom: 14px; font-weight: 700; }
+  .lovable-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 2px; line-height: 0.9; margin-bottom: 8px; }
+  .lovable-title span { color: var(--purple); }
+  .lovable-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+  .credit-warning { background: rgba(255,211,42,0.07); border: 1px solid rgba(255,211,42,0.35); padding: 14px 20px; margin-bottom: 24px; font-size: 14px; line-height: 1.6; }
+  .credit-warning strong { color: var(--gold); }
+  .lovable-must { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--purple); padding: 24px; margin-bottom: 20px; }
+  .lovable-must h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--purple); margin-bottom: 14px; }
+  .must-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .must-item { font-size: 14px; color: var(--muted); padding: 10px 14px; background: rgba(165,94,234,0.06); border: 1px solid rgba(165,94,234,0.2); line-height: 1.4; }
+  .must-item strong { color: var(--text); display: block; margin-bottom: 2px; }
+  .lovable-prompt-box { background: rgba(165,94,234,0.05); border: 1px solid rgba(165,94,234,0.3); padding: 20px 24px; margin-bottom: 24px; }
+  .lovable-prompt-box h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+  .prompt-template { font-size: 13px; color: var(--text); line-height: 1.7; font-family: monospace; background: rgba(0,0,0,0.3); padding: 14px 16px; }
+  .lovable-timer-block { background: var(--surface); border: 2px solid var(--purple); padding: 24px; display: flex; align-items: center; justify-content: space-between; }
+  .lovable-timer-display { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--purple); line-height: 1; }
+  .lovable-timer-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--purple); margin-bottom: 4px; }
+  .lovable-timer-btn { background: var(--purple); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 2px; padding: 10px 20px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; }
+  .lovable-timer-btn:hover { opacity: 0.8; }
+  .lovable-timer-btn.secondary { background: var(--border); color: var(--muted); }
+
+  /* ── PRACTICE ── */
+  .practice-screen { justify-content: center; align-items: center; padding: 40px; }
+  .practice-inner { max-width: 860px; width: 100%; }
+  .practice-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 2px; line-height: 0.9; margin-bottom: 8px; }
+  .practice-title span { color: var(--green); }
+  .practice-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+  .practice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .practice-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; }
+  .practice-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+  .practice-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .practice-card ul li { font-size: 14px; color: var(--muted); padding-left: 16px; position: relative; line-height: 1.4; }
+  .practice-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--green); }
+  .qr-placeholder { border: 2px dashed var(--border); padding: 40px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: var(--surface); }
+  .qr-placeholder .qr-icon { font-size: 48px; opacity: 0.3; }
+
+  /* ── SHARKS ── */
+  .sharks-screen { justify-content: center; align-items: center; padding: 40px; }
+  .sharks-inner { max-width: 900px; width: 100%; }
+  .sharks-title { font-family: 'Bebas Neue', sans-serif; font-size: 80px; letter-spacing: 2px; line-height: 0.9; margin-bottom: 8px; }
+  .sharks-title span { color: var(--red); }
+  .sharks-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+  .current-group-box { background: rgba(255,71,87,0.07); border: 2px solid var(--red); padding: 20px 28px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+  .current-group-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+  .current-group-name { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--text); }
+  .pitch-timer-display { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--red); line-height: 1; text-align: right; }
+  .pitch-timer-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--red); text-align: right; margin-bottom: 4px; }
+  .sharks-controls { display: flex; gap: 10px; margin-bottom: 24px; }
+  .shark-btn { background: var(--red); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 2px; padding: 12px 24px; cursor: pointer; font-weight: 700; transition: opacity 0.2s; }
+  .shark-btn:hover { opacity: 0.8; }
+  .shark-btn.secondary { background: var(--border); color: var(--muted); }
+  .shark-btn.secondary:hover { background: var(--surface); color: var(--text); }
+  .group-nav { display: flex; gap: 8px; align-items: center; }
+  .group-nav-btn { background: var(--border); color: var(--muted); border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; padding: 8px 16px; cursor: pointer; transition: all 0.2s; }
+  .group-nav-btn:hover { background: var(--surface); color: var(--text); }
+  .group-counter { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; color: var(--muted); padding: 0 8px; }
+  .sharks-rules { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .rule-card { background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; }
+  .rule-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .rule-card p { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+  /* ── DEBRIEF ── */
+  .debrief-screen { justify-content: center; align-items: center; padding: 40px; }
+  .debrief-inner { max-width: 860px; width: 100%; }
+  .debrief-title { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 2px; line-height: 0.9; margin-bottom: 8px; }
+  .debrief-title span { color: var(--accent); }
+  .debrief-sub { font-size: 15px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+  .debrief-qs { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+  .debrief-q { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 18px 22px; }
+  .debrief-q-num { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+  .debrief-q-text { font-size: 16px; font-weight: 700; line-height: 1.4; }
+  .debrief-landing { background: rgba(46,213,115,0.07); border: 1px solid rgba(46,213,115,0.25); padding: 20px 24px; font-size: 14px; line-height: 1.7; color: var(--text); }
+  .debrief-landing strong { color: var(--green); }
+
+  /* Group input */
+  .group-input-wrap { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .group-input { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'Barlow Condensed', sans-serif; font-size: 16px; padding: 8px 14px; letter-spacing: 1px; width: 200px; outline: none; }
+  .group-input:focus { border-color: var(--accent); }
+  .group-set-btn { background: var(--accent); color: #fff; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; padding: 8px 16px; cursor: pointer; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="session-badge">SESSION 2</div>
+    <div class="session-title">BUILD YOUR PITCH — 16:30–18:00</div>
+  </div>
+  <div class="topbar-right">
+    <button class="nav-btn active" onclick="show('intro')">Intro</button>
+    <button class="nav-btn" onclick="show('jobs')">Jobs Clip</button>
+    <button class="nav-btn" onclick="show('theory')">Theory</button>
+    <button class="nav-btn" onclick="show('aiplan')">AI Plan</button>
+    <button class="nav-btn" onclick="show('lovable')">Lovable</button>
+    <button class="nav-btn" onclick="show('practice')">Practice</button>
+    <button class="nav-btn" onclick="show('sharks')">Sharks</button>
+    <button class="nav-btn" onclick="show('debrief')">Debrief</button>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="screen intro-screen active" id="screen-intro">
+  <div class="intro-inner">
+    <div class="intro-tag">Communication · Session 2 · The Build</div>
+    <div class="intro-title">BUILD<br><span>YOUR PITCH.</span></div>
+    <div class="arc-row">
+      <div class="arc-step">
+        <div class="arc-step-label">Module 1</div>
+        <div class="arc-step-name">Teams</div>
+      </div>
+      <div class="arc-arrow">→</div>
+      <div class="arc-step current">
+        <div class="arc-step-label">Module 2 — Today</div>
+        <div class="arc-step-name">Communication</div>
+      </div>
+      <div class="arc-arrow">→</div>
+      <div class="arc-step">
+        <div class="arc-step-label">Module 3 — Next</div>
+        <div class="arc-step-name">Negotiation</div>
+      </div>
+    </div>
+    <div class="intro-agenda">
+      <div class="agenda-item">
+        <div class="agenda-time">16:30</div>
+        <div class="agenda-desc"><strong>The Steve Jobs Test</strong>Watch 90 seconds. Analyze what made it work.</div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">16:45</div>
+        <div class="agenda-desc"><strong>Theory Flash</strong>Pitch structure · Cuddy matrix · Non-verbal</div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">17:00</div>
+        <div class="agenda-desc"><strong>Phase 1 — AI Plan (15 min)</strong>ChatGPT/Claude to structure your pitch. No Lovable yet.</div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">17:15</div>
+        <div class="agenda-desc"><strong>Phase 2 — Lovable (25 min)</strong>Build your landing page. One prompt. Submit URL.</div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">17:40</div>
+        <div class="agenda-desc"><strong>Phase 3 — Practice (10 min)</strong>Rehearse. Who speaks? What's the hook?</div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">17:50</div>
+        <div class="agenda-desc"><strong>The Tank — Pitch to Sharks (10 min)</strong>Selected groups pitch. Class votes. Sharks decide.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JOBS CLIP -->
+<div class="screen jobs-screen" id="screen-jobs">
+  <div class="jobs-inner">
+    <div class="jobs-title">THE <span>JOBS TEST</span></div>
+    <div class="jobs-sub">January 9, 2007. Steve Jobs introduces the iPhone. You're watching 90 seconds. Pay attention to everything.</div>
+    <div class="watch-instructions">
+      <strong>Watch this clip:</strong> Steve Jobs iPhone Keynote 2007 — search "Steve Jobs iPhone 2007 introduction" on YouTube. Start at ~0:00, stop at 1:30.<br>
+      As you watch, ask yourself: <strong>what is he doing that most people don't?</strong> We'll analyze it together after.
+    </div>
+    <div style="margin-bottom: 16px; font-size: 14px; color: var(--muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">↓ Click each card to reveal the analysis</div>
+    <div class="jobs-grid">
+      <div class="jobs-card" onclick="this.classList.toggle('revealed')">
+        <div class="jobs-card-label">What he said</div>
+        <h4>The Story Before the Product</h4>
+        <div class="jobs-card-detail">He doesn't open with specs or features. He opens with a problem: "The most advanced phones out there are called smartphones — but the problem is they're not so smart." He sets up a villain before revealing the hero. Your pitch needs a villain too.</div>
+      </div>
+      <div class="jobs-card" onclick="this.classList.toggle('revealed')">
+        <div class="jobs-card-label">How he said it</div>
+        <h4>Silence as a Tool</h4>
+        <div class="jobs-card-detail">He pauses. Deliberately. Three beats before the reveal. Most presenters are terrified of silence — they fill it with "uhm." Jobs weaponized silence. It creates anticipation. The audience leans in. The reveal lands harder.</div>
+      </div>
+      <div class="jobs-card" onclick="this.classList.toggle('revealed')">
+        <div class="jobs-card-label">His body</div>
+        <h4>He Owns the Stage</h4>
+        <div class="jobs-card-detail">He moves with intention, not nervousness. Eye contact is specific — he picks one person at a time. No fidgeting, no locked feet. And he smiles when he means it, not as a habit. His body says: "I know something you're about to love."</div>
+      </div>
+      <div class="jobs-card" onclick="this.classList.toggle('revealed')">
+        <div class="jobs-card-label">The structure</div>
+        <h4>Rule of Three, Every Time</h4>
+        <div class="jobs-card-detail">"An iPod. A phone. And an internet communicator." Three things. Repeated. People remember in threes. Every good pitch uses rule of three — your problem, your solution, your ask. Not four. Not two. Three.</div>
+      </div>
+      <div class="jobs-card" onclick="this.classList.toggle('revealed')">
+        <div class="jobs-card-label">The audience</div>
+        <h4>He Made Them Feel Smart</h4>
+        <div class="jobs-card-detail">The audience started laughing and cheering before the reveal. He let them figure it out. He said "are you getting it?" — not to condescend, but to confirm they were ahead of him. When the audience feels clever, they're yours.</div>
+      </div>
+      <div class="jobs-card" onclick="this.classList.toggle('revealed')">
+        <div class="jobs-card-label">The lesson for your pitch</div>
+        <h4>You Already Have This</h4>
+        <div class="jobs-card-detail">Jobs didn't have a trick. He had preparation and obsession with the audience's experience. For Shark Tank: What's your villain? What's your reveal? What's the one thing you want them to remember? Start there — not with features, not with slides.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THEORY -->
+<div class="screen theory-screen scroll-screen" id="screen-theory">
+  <div class="theory-inner">
+    <div class="theory-tag">Communication · Session 2</div>
+    <div class="theory-title">WHAT MAKES A <span>PITCH</span></div>
+    <div class="theory-tabs">
+      <button class="theory-tab active" onclick="showTab('pitch')">Pitch Structure</button>
+      <button class="theory-tab" onclick="showTab('cuddy')">Warm vs Competent</button>
+      <button class="theory-tab" onclick="showTab('nv')">Non-Verbal</button>
+    </div>
+
+    <div class="theory-panel active" id="tab-pitch">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Every great pitch — Shark Tank, job interview, investor meeting — follows this structure. In 3 minutes, you can hit all 5. Practice it today.</p>
+      <div class="pitch-steps">
+        <div class="pitch-step">
+          <div class="pitch-step-num">1</div>
+          <div class="pitch-step-body">
+            <h4>The Hook — 20 seconds</h4>
+            <p>Start with the problem, not the product. Make the audience feel the pain before you offer the cure. <em>Example: "Every year, 3 million kilos of food go to waste while 800 million people go hungry. We built the fix."</em></p>
+          </div>
+        </div>
+        <div class="pitch-step">
+          <div class="pitch-step-num">2</div>
+          <div class="pitch-step-body">
+            <h4>The Solution — 30 seconds</h4>
+            <p>One sentence. What do you do, for whom, and what's different? Avoid jargon. If your grandmother can't understand it, start over. <em>The simpler it sounds, the harder it was to write.</em></p>
+          </div>
+        </div>
+        <div class="pitch-step">
+          <div class="pitch-step-num">3</div>
+          <div class="pitch-step-body">
+            <h4>The Proof — 60 seconds</h4>
+            <p>Why you? Why now? One piece of evidence that this is real: a user stat, a market number, an early result. Sharks don't fund ideas — they fund traction and people. Show them both.</p>
+          </div>
+        </div>
+        <div class="pitch-step">
+          <div class="pitch-step-num">4</div>
+          <div class="pitch-step-body">
+            <h4>The Ask — 20 seconds</h4>
+            <p>Be specific. <em>"We're asking for €100,000 for 15% equity."</em> Not "some investment." Not "open to discussion." Confidence in your number signals you've done the math. Vagueness signals fear.</p>
+          </div>
+        </div>
+        <div class="pitch-step">
+          <div class="pitch-step-num">5</div>
+          <div class="pitch-step-body">
+            <h4>The Close — 10 seconds</h4>
+            <p>What happens if the sharks invest? Paint the picture. One sentence on the future. Then stop talking. The biggest mistake pitchers make: they keep going after the ask. Stop.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theory-panel" id="tab-cuddy">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Amy Cuddy's research at Harvard: people judge you on two dimensions within seconds. The order matters.</p>
+      <div class="cuddy-axes"><span>← Low Warmth</span><span>High Warmth →</span></div>
+      <div class="cuddy-wrap">
+        <div class="cuddy-quad tl">
+          <div class="cuddy-label">High competence · Low warmth</div>
+          <h4>The Envied Expert</h4>
+          <p>Respected but not liked. People listen but won't go out of their way for you. <br><br><strong>Risk:</strong> Sharks see you as smart but cold — hard to trust with their money.</p>
+        </div>
+        <div class="cuddy-quad tr">
+          <div class="cuddy-label">High competence · High warmth</div>
+          <h4>The Leader</h4>
+          <p>This is the zone. People admire you AND root for you. You get the benefit of the doubt on mistakes. <br><br><strong>Target:</strong> Competent enough to be credible, warm enough to be fundable.</p>
+        </div>
+        <div class="cuddy-quad bl">
+          <div class="cuddy-label">Low competence · Low warmth</div>
+          <h4>The Threat</h4>
+          <p>People avoid, undermine, or dismiss. The danger zone. <br><br><strong>In a pitch:</strong> Not knowing your numbers AND being arrogant = instant no.</p>
+        </div>
+        <div class="cuddy-quad br">
+          <div class="cuddy-label">Low competence · High warmth</div>
+          <h4>The Well-Meaning Amateur</h4>
+          <p>Liked but not taken seriously. People want to help you but won't bet on you. <br><br><strong>Shark Tank trap:</strong> Being too friendly without proving you can execute.</p>
+        </div>
+      </div>
+      <div style="background:rgba(46,213,115,0.07);border:1px solid rgba(46,213,115,0.25);padding:16px 20px;margin-top:16px;font-size:14px;line-height:1.6;color:var(--text);">
+        <strong style="color:var(--green);">The sequence:</strong> Warmth comes first. Always. Cuddy's finding: competence claims land better once the audience trusts you. Lead with story, smile, energy — then hit them with the data.
+      </div>
+    </div>
+
+    <div class="theory-panel" id="tab-nv">
+      <div class="nv-row">
+        <div class="nv-card">
+          <div class="nv-label">What you say</div>
+          <div class="nv-pct">7%</div>
+          <h4>The Words</h4>
+          <p>Just the words. The actual content. If all they get is the transcript, they get almost nothing. Choose them well — but know they're not the message.</p>
+        </div>
+        <div class="nv-card">
+          <div class="nv-label">How you say it</div>
+          <div class="nv-pct">38%</div>
+          <h4>Voice & Tone</h4>
+          <p>Pace, volume, pitch, pauses. A slow voice signals confidence. A fast voice signals nerves. Deep breath before high-stakes moments. Your voice is an instrument — tune it.</p>
+        </div>
+        <div class="nv-card">
+          <div class="nv-label">What your body says</div>
+          <div class="nv-pct">55%</div>
+          <h4>Body Language</h4>
+          <p>Posture, eye contact, gestures, space. This is the majority of your message. You can't fake it under pressure — but you can prepare it. Choose your stance before you walk in.</p>
+        </div>
+      </div>
+      <div class="primacy-box">
+        <h4>Primacy & Recency — The Memory Curve</h4>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">People remember the beginning and end of what you say. The middle gets compressed. Design your pitch accordingly.</p>
+        <div class="primacy-bar">
+          <div class="primacy-bar-start" style="width:22%;">HOOK ↑</div>
+          <div class="primacy-bar-mid">Middle (remembered partially)</div>
+          <div class="primacy-bar-end" style="width:20%;">CLOSE ↑</div>
+        </div>
+        <p style="font-size:13px;color:var(--muted);">This is why your first sentence and last sentence need to be <strong style="color:var(--text);">written, rehearsed, and exact</strong>. Everything else can be improvised slightly. These two cannot.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI PLAN -->
+<div class="screen aiplan-screen" id="screen-aiplan">
+  <div class="aiplan-inner">
+    <div class="phase-badge">PHASE 1 OF 3</div>
+    <div class="aiplan-title">AI PLAN.<br><span>NOT LOVABLE.</span></div>
+    <div class="aiplan-sub">Before you touch Lovable, spend 15 minutes planning with an AI. One well-structured plan = one clean Lovable prompt = no wasted credits.</div>
+    <div class="warning-box"><span>⚠ DO NOT OPEN LOVABLE YET.</span> Use ChatGPT, Claude, or whatever AI you have tokens on. Lovable credits are limited. Plan first, build once.</div>
+    <div class="aiplan-grid">
+      <div class="aiplan-card">
+        <h4>What your AI prompt needs to produce</h4>
+        <ul>
+          <li><strong>Company name and tagline</strong> — one punchy line</li>
+          <li><strong>The problem you solve</strong> — one sentence, vivid</li>
+          <li><strong>Your solution</strong> — what it is and why it's different</li>
+          <li><strong>Your traction or proof</strong> — at least one fake-but-plausible stat</li>
+          <li><strong>The ask</strong> — €100K for X% equity (decide the X)</li>
+          <li><strong>Team section</strong> — all member names + their role in the company</li>
+        </ul>
+      </div>
+      <div class="aiplan-card">
+        <h4>Things to decide in your group NOW</h4>
+        <ul>
+          <li><strong>The sector</strong> — what industry? tech, food, health, fashion?</li>
+          <li><strong>The customer</strong> — who buys this and why?</li>
+          <li><strong>Who pitches</strong> — one person or multiple? Decide now.</li>
+          <li><strong>The hook sentence</strong> — draft it. Revise it. Lock it.</li>
+          <li><strong>Equity %</strong> — you're asking €100K. For how much of the company?</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timer-block">
+      <div>
+        <div class="timer-label">Phase 1 — AI Planning</div>
+        <div class="timer-display" id="aiplan-timer">15:00</div>
+      </div>
+      <div class="timer-btns">
+        <button class="timer-btn" onclick="startAIPlanTimer()">START</button>
+        <button class="timer-btn secondary" onclick="resetAIPlanTimer()">RESET</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOVABLE -->
+<div class="screen lovable-screen scroll-screen" id="screen-lovable">
+  <div class="lovable-inner">
+    <div class="lovable-phase-badge">PHASE 2 OF 3</div>
+    <div class="lovable-title">LOVABLE.<br><span>BUILD IT.</span></div>
+    <div class="lovable-sub">Now open Lovable. You have 25 minutes and limited credits. Paste one comprehensive prompt. Get the landing page. Don't iterate endlessly — ship it.</div>
+    <div class="credit-warning">
+      <strong>Credit management:</strong> Lovable gives you a limited number of free prompts. Send one complete, detailed prompt — not 10 small ones. If it's not perfect, that's fine. You're not launching Apple. You're demonstrating that your idea can be communicated clearly.
+    </div>
+    <div class="lovable-must">
+      <h4>Your landing page must include</h4>
+      <div class="must-grid">
+        <div class="must-item"><strong>Team section</strong>All names + their role in the startup</div>
+        <div class="must-item"><strong>Value proposition</strong>One headline that sells the idea</div>
+        <div class="must-item"><strong>The problem + solution</strong>Short, visual, clear</div>
+        <div class="must-item"><strong>The ask</strong>€100K for X% equity — visible on the page</div>
+        <div class="must-item"><strong>One "proof" element</strong>A stat, a testimonial, a number</div>
+        <div class="must-item"><strong>A CTA</strong>"Invest Now" or "Join the Mission" button</div>
+      </div>
+    </div>
+    <div class="lovable-prompt-box">
+      <h4>Lovable prompt template — copy, fill in the [brackets], send once</h4>
+      <div class="prompt-template">Build a dark-themed, modern startup landing page for a company called [NAME].<br><br>
+Tagline: [YOUR TAGLINE]<br><br>
+Sections needed:<br>
+1. Hero — headline "[TAGLINE]", subheadline "[ONE-SENTENCE PROBLEM]", CTA button "[INVEST NOW / YOUR CTA]"<br>
+2. Problem — [describe the problem in 2-3 sentences]<br>
+3. Solution — [what you do and why it's different]<br>
+4. Traction — one key stat: [e.g. "2,400 beta users in 3 weeks"]<br>
+5. The Ask — "We are seeking €100,000 for [X]% equity"<br>
+6. Team — cards with names and roles: [Name 1, Role], [Name 2, Role], [Name 3, Role]...<br><br>
+Style: dark background (#0a0a12), accent color [PICK ONE HEX], bold sans-serif fonts, clean layout. No stock photos. Use simple icons or minimal graphics. Mobile-friendly.</div>
+    </div>
+    <div class="lovable-timer-block">
+      <div>
+        <div class="lovable-timer-label">Phase 2 — Build Time</div>
+        <div class="lovable-timer-display" id="lovable-timer">25:00</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="lovable-timer-btn" onclick="startLovableTimer()">START</button>
+        <button class="lovable-timer-btn secondary" onclick="resetLovableTimer()">RESET</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE -->
+<div class="screen practice-screen" id="screen-practice">
+  <div class="practice-inner">
+    <div class="phase-badge" style="background:var(--green);">PHASE 3 OF 3</div>
+    <div class="practice-title">PRACTICE.<br><span>10 MINUTES.</span></div>
+    <div class="practice-sub">The landing page is done. Now prepare the person (or people) who will pitch. This is the part most groups skip — don't be that group.</div>
+    <div class="practice-grid">
+      <div class="practice-card">
+        <h4>What to rehearse right now</h4>
+        <ul>
+          <li>Say your <strong>first sentence</strong> out loud. Three times.</li>
+          <li>Say your <strong>ask</strong> out loud. Confidently.</li>
+          <li>Time yourself. 3 minutes max.</li>
+          <li>Have one person watch and give feedback on eye contact.</li>
+          <li>Decide on your <strong>last sentence</strong>. Say it. Stop after it.</li>
+        </ul>
+      </div>
+      <div class="practice-card">
+        <h4>Submit your landing page URL</h4>
+        <ul>
+          <li>Go to the URL below (or scan QR code)</li>
+          <li>Enter all team member names</li>
+          <li>Paste your Lovable landing page URL</li>
+          <li>Submit — it's visible on the professor's dashboard</li>
+        </ul>
+        <div class="qr-placeholder" style="margin-top:14px;min-height:90px;">
+          <div class="qr-icon">⬜</div>
+          <div>ADD QR CODE<br>submit_s2.html</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:2px solid var(--green);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:4px;">Practice Timer</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--green);line-height:1;" id="practice-timer">10:00</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button style="background:var(--green);color:var(--bg);border:none;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;padding:12px 24px;cursor:pointer;font-weight:700;" onclick="startPracticeTimer()">START</button>
+        <button style="background:var(--border);color:var(--muted);border:none;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;padding:12px 24px;cursor:pointer;" onclick="resetPracticeTimer()">RESET</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHARKS -->
+<div class="screen sharks-screen" id="screen-sharks">
+  <div class="sharks-inner">
+    <div class="sharks-title">SHARK<br><span>TANK.</span></div>
+    <div class="sharks-sub">Groups pitch. Class votes with their money. 3 minutes each. No mercy.</div>
+
+    <div class="current-group-box">
+      <div>
+        <div class="current-group-label">Now Pitching</div>
+        <div class="current-group-name" id="current-group-display">Group 1</div>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+          <div class="group-input-wrap" style="margin-bottom:0;">
+            <input class="group-input" id="group-name-input" placeholder="Group name..." />
+            <button class="group-set-btn" onclick="setGroupName()">SET</button>
+          </div>
+          <div class="group-nav">
+            <button class="group-nav-btn" onclick="prevGroup()">← PREV</button>
+            <div class="group-counter" id="group-counter">1 / 24</div>
+            <button class="group-nav-btn" onclick="nextGroup()">NEXT →</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="pitch-timer-label">Pitch Timer</div>
+        <div class="pitch-timer-display" id="pitch-timer">3:00</div>
+      </div>
+    </div>
+
+    <div class="sharks-controls">
+      <button class="shark-btn" onclick="startPitchTimer()">▶ START PITCH</button>
+      <button class="shark-btn secondary" onclick="resetPitchTimer()">↺ RESET</button>
+    </div>
+
+    <div class="sharks-rules">
+      <div class="rule-card">
+        <h4>Sharks: You Have €500K</h4>
+        <p>Decide how much to "invest" in each pitch. You can split across groups or go all-in on one. After all pitches: show hands — who invested in which group?</p>
+      </div>
+      <div class="rule-card">
+        <h4>What to Judge</h4>
+        <p>Does the problem feel real? Do you trust this team? Was the pitch clear in 3 minutes? Did you want to know more — or check your phone?</p>
+      </div>
+      <div class="rule-card">
+        <h4>After Each Pitch</h4>
+        <p>30 seconds of shark questions. One person asks the hardest question they can think of. Pitcher must answer — no "we'll figure it out."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEBRIEF -->
+<div class="screen debrief-screen" id="screen-debrief">
+  <div class="debrief-inner">
+    <div class="debrief-title">WHAT JUST<br><span>HAPPENED?</span></div>
+    <div class="debrief-sub">Every pitch you watched today — including yours — was a communication experiment. Let's unpack it.</div>
+    <div class="debrief-qs">
+      <div class="debrief-q">
+        <div class="debrief-q-num">Question 1</div>
+        <div class="debrief-q-text">Which pitch got the most "investment" — and why? What did they do differently in the first 30 seconds?</div>
+      </div>
+      <div class="debrief-q">
+        <div class="debrief-q-num">Question 2</div>
+        <div class="debrief-q-text">If you had 30 more minutes to redo your own pitch, what's the ONE thing you'd change?</div>
+      </div>
+      <div class="debrief-q">
+        <div class="debrief-q-num">Question 3</div>
+        <div class="debrief-q-text">The landing page helped — or it didn't. When did the visual actually reinforce the pitch? When was it a distraction?</div>
+      </div>
+      <div class="debrief-q">
+        <div class="debrief-q-num">Question 4</div>
+        <div class="debrief-q-text">Name a real situation you'll face in the next 5 years where this exact skill — pitching an idea under pressure — will matter.</div>
+      </div>
+    </div>
+    <div class="debrief-landing">
+      <strong>The real lesson:</strong> You didn't just build a landing page today. You practiced compressing a complex idea into a clear, human, compelling story — in 3 minutes. That skill is the same whether you're pitching to investors, to your boss, to a client, or to yourself.<br><br>
+      Most people wait until they're "good enough" to communicate boldly. The ones who succeed start doing it badly — and improve from there.<br><br>
+      <strong>Next session (18:15):</strong> We wrap the whole day and you reflect — individually — on what you'll actually carry forward.
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentGroup = 1;
+  const totalGroups = 24;
+
+  function show(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function showTab(name) {
+    document.querySelectorAll('.theory-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.theory-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // ── Timers ──
+  let aiPlanInterval, lovableInterval, practiceInterval, pitchInterval;
+
+  function makeTimer(display, mins, intervalVar, startFn, resetFn) {
+    return { secs: mins * 60, display };
+  }
+
+  let aiPlanSecs = 15 * 60;
+  let lovableSecs = 25 * 60;
+  let practiceSecs = 10 * 60;
+  let pitchSecs = 3 * 60;
+
+  function fmt(s) {
+    const m = Math.floor(s / 60), sec = s % 60;
+    return `${m}:${sec.toString().padStart(2,'0')}`;
+  }
+
+  function startAIPlanTimer() {
+    clearInterval(aiPlanInterval);
+    aiPlanInterval = setInterval(() => {
+      if (aiPlanSecs <= 0) { clearInterval(aiPlanInterval); document.getElementById('aiplan-timer').style.color='var(--red)'; return; }
+      aiPlanSecs--;
+      document.getElementById('aiplan-timer').textContent = fmt(aiPlanSecs);
+      if (aiPlanSecs <= 60) document.getElementById('aiplan-timer').style.color = 'var(--red)';
+    }, 1000);
+  }
+  function resetAIPlanTimer() {
+    clearInterval(aiPlanInterval);
+    aiPlanSecs = 15 * 60;
+    document.getElementById('aiplan-timer').textContent = '15:00';
+    document.getElementById('aiplan-timer').style.color = 'var(--blue)';
+  }
+
+  function startLovableTimer() {
+    clearInterval(lovableInterval);
+    lovableInterval = setInterval(() => {
+      if (lovableSecs <= 0) { clearInterval(lovableInterval); document.getElementById('lovable-timer').style.color='var(--red)'; return; }
+      lovableSecs--;
+      document.getElementById('lovable-timer').textContent = fmt(lovableSecs);
+      if (lovableSecs <= 120) document.getElementById('lovable-timer').style.color = 'var(--red)';
+    }, 1000);
+  }
+  function resetLovableTimer() {
+    clearInterval(lovableInterval);
+    lovableSecs = 25 * 60;
+    document.getElementById('lovable-timer').textContent = '25:00';
+    document.getElementById('lovable-timer').style.color = 'var(--purple)';
+  }
+
+  function startPracticeTimer() {
+    clearInterval(practiceInterval);
+    practiceInterval = setInterval(() => {
+      if (practiceSecs <= 0) { clearInterval(practiceInterval); document.getElementById('practice-timer').style.color='var(--red)'; return; }
+      practiceSecs--;
+      document.getElementById('practice-timer').textContent = fmt(practiceSecs);
+      if (practiceSecs <= 60) document.getElementById('practice-timer').style.color = 'var(--red)';
+    }, 1000);
+  }
+  function resetPracticeTimer() {
+    clearInterval(practiceInterval);
+    practiceSecs = 10 * 60;
+    document.getElementById('practice-timer').textContent = '10:00';
+    document.getElementById('practice-timer').style.color = 'var(--green)';
+  }
+
+  function startPitchTimer() {
+    clearInterval(pitchInterval);
+    pitchSecs = 3 * 60;
+    document.getElementById('pitch-timer').style.color = 'var(--red)';
+    pitchInterval = setInterval(() => {
+      if (pitchSecs <= 0) {
+        clearInterval(pitchInterval);
+        document.getElementById('pitch-timer').textContent = 'TIME';
+        document.getElementById('pitch-timer').style.color = 'var(--accent)';
+        return;
+      }
+      pitchSecs--;
+      document.getElementById('pitch-timer').textContent = fmt(pitchSecs);
+      if (pitchSecs <= 30) document.getElementById('pitch-timer').style.color = 'var(--accent)';
+    }, 1000);
+  }
+  function resetPitchTimer() {
+    clearInterval(pitchInterval);
+    pitchSecs = 3 * 60;
+    document.getElementById('pitch-timer').textContent = '3:00';
+    document.getElementById('pitch-timer').style.color = 'var(--red)';
+  }
+
+  function setGroupName() {
+    const val = document.getElementById('group-name-input').value.trim();
+    if (val) document.getElementById('current-group-display').textContent = val;
+  }
+  function nextGroup() {
+    if (currentGroup < totalGroups) currentGroup++;
+    document.getElementById('current-group-display').textContent = 'Group ' + currentGroup;
+    document.getElementById('group-counter').textContent = currentGroup + ' / ' + totalGroups;
+    document.getElementById('group-name-input').value = '';
+    resetPitchTimer();
+  }
+  function prevGroup() {
+    if (currentGroup > 1) currentGroup--;
+    document.getElementById('current-group-display').textContent = 'Group ' + currentGroup;
+    document.getElementById('group-counter').textContent = currentGroup + ' / ' + totalGroups;
+    document.getElementById('group-name-input').value = '';
+    resetPitchTimer();
+  }
+</script>
+</body>
+</html>

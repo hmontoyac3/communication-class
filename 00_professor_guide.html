@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professor Guide | Communication Module</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a12; --surface: #13131f; --border: #2a2a3e; --text: #e8e8f0;
+    --muted: #6b6b8a; --accent: #ff6b35; --blue: #3d84ff; --green: #2ed573;
+    --gold: #ffd32a; --purple: #a55eea; --red: #ff4757;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; overflow-y: auto; }
+
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 40px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .badge { background: var(--accent); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; padding: 4px 12px; font-weight: 700; }
+  .topbar-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .nav { display: flex; gap: 8px; }
+  .nav a { color: var(--muted); font-size: 13px; text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); transition: all 0.2s; }
+  .nav a:hover { color: var(--text); border-color: var(--accent); }
+
+  .main { max-width: 1000px; margin: 0 auto; padding: 48px 40px 80px; }
+
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 2px; margin-bottom: 6px; }
+  h1 span { color: var(--accent); }
+  .intro-sub { font-size: 16px; color: var(--muted); margin-bottom: 48px; line-height: 1.6; max-width: 680px; }
+
+  /* Section headers */
+  .section { margin-bottom: 56px; }
+  .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .section-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--accent); line-height: 1; }
+  .section-title-block h2 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; }
+  .section-title-block p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  /* Timeline */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-block { display: flex; gap: 0; }
+  .tl-time { min-width: 80px; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; color: var(--accent); letter-spacing: 1px; padding: 16px 0; font-weight: 700; }
+  .tl-bar { width: 2px; background: var(--border); margin: 0 20px; position: relative; flex-shrink: 0; }
+  .tl-bar::before { content: ''; position: absolute; top: 20px; left: -4px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; }
+  .tl-content { flex: 1; background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; margin-bottom: 8px; }
+  .tl-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .tl-content p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .tl-content .tag { display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 2px; padding: 2px 8px; margin-bottom: 6px; font-weight: 700; }
+  .tag-exercise { background: rgba(255,107,53,0.15); color: var(--accent); }
+  .tag-theory { background: rgba(61,132,255,0.15); color: var(--blue); }
+  .tag-logistics { background: rgba(107,107,138,0.2); color: var(--muted); }
+  .tag-critical { background: rgba(255,71,87,0.15); color: var(--red); }
+  .tag-ai { background: rgba(165,94,234,0.15); color: var(--purple); }
+
+  /* Script boxes */
+  .script { background: rgba(255,107,53,0.04); border-left: 3px solid var(--accent); padding: 14px 18px; margin: 14px 0; font-size: 14px; line-height: 1.7; font-style: italic; color: var(--text); }
+  .script strong { font-style: normal; color: var(--accent); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 6px; }
+
+  /* Info cards */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .info-card { background: var(--surface); border: 1px solid var(--border); padding: 18px 20px; }
+  .info-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .info-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .info-card ul li { font-size: 13px; color: var(--muted); padding-left: 14px; position: relative; line-height: 1.4; }
+  .info-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 12px; }
+  .info-card ul li strong { color: var(--text); }
+
+  /* Alert / warning boxes */
+  .alert { padding: 14px 18px; margin: 14px 0; font-size: 13px; line-height: 1.6; border-radius: 0; }
+  .alert-warn { background: rgba(255,211,42,0.06); border: 1px solid rgba(255,211,42,0.3); color: var(--gold); }
+  .alert-danger { background: rgba(255,71,87,0.06); border: 1px solid rgba(255,71,87,0.3); color: var(--red); }
+  .alert-tip { background: rgba(46,213,115,0.06); border: 1px solid rgba(46,213,115,0.3); color: var(--green); }
+  .alert-info { background: rgba(61,132,255,0.06); border: 1px solid rgba(61,132,255,0.3); color: var(--blue); }
+  .alert strong { color: inherit; }
+
+  /* Debrief questions */
+  .debrief-qs { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+  .dq { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 12px 16px; }
+  .dq-q { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .dq-note { font-size: 12px; color: var(--muted); }
+
+  /* Setup checklist */
+  .checklist { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
+  .check-item { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); padding: 12px 16px; }
+  .check-box { width: 18px; height: 18px; border: 2px solid var(--accent); flex-shrink: 0; margin-top: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--accent); transition: background 0.2s; }
+  .check-box.checked { background: var(--accent); color: var(--bg); }
+  .check-text { font-size: 14px; line-height: 1.5; }
+  .check-text strong { display: block; color: var(--text); margin-bottom: 2px; }
+  .check-text span { color: var(--muted); font-size: 12px; }
+
+  /* Files table */
+  .files-table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+  .files-table th { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); padding: 8px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  .files-table td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; }
+  .files-table tr:last-child td { border-bottom: none; }
+  .files-table code { background: rgba(255,107,53,0.1); color: var(--accent); padding: 2px 6px; font-family: monospace; font-size: 12px; }
+  .files-table td:last-child { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="badge">PROFESSOR GUIDE</div>
+    <div class="topbar-title">COMMUNICATION MODULE — FULL PLAYBOOK</div>
+  </div>
+  <div class="nav">
+    <a href="#setup">Setup</a>
+    <a href="#s1">Session 1</a>
+    <a href="#s2">Session 2</a>
+    <a href="#s3">Session 3</a>
+    <a href="#files">Files</a>
+  </div>
+</div>
+
+<div class="main">
+  <h1>PROFESSOR<br><span>PLAYBOOK.</span></h1>
+  <div class="intro-sub">Communication module. Same day, three sessions: 14:45–16:15 · 16:30–18:00 · 18:15–18:50. ~120 students, groups of 5 pre-assigned. This guide has everything: setup checklist, word-for-word scripts for theory flashes, debrief facilitation notes, and technical setup for Firebase.</div>
+
+  <!-- ── BEFORE CLASS ── -->
+  <div class="section" id="setup">
+    <div class="section-header">
+      <div class="section-num">0</div>
+      <div class="section-title-block">
+        <h2>Before Class — Setup Checklist</h2>
+        <p>Complete everything below before 14:30. The class runs on tight timing.</p>
+      </div>
+    </div>
+
+    <div class="alert alert-danger"><strong>⚠ Critical:</strong> Groups must be pre-assigned before class. Students cannot self-select — it wastes 10 minutes and results in friend clusters. Assign groups in advance, post the list on Blackboard as "available from 14:00" on class day.</div>
+
+    <div class="checklist">
+      <div class="check-item">
+        <div class="check-box" onclick="toggleCheck(this)">✓</div>
+        <div class="check-text"><strong>Push communication/ folder to GitHub Pages</strong><span>All HTML + JS files must be publicly accessible. Run a test from your phone.</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>Generate QR codes for 2 forms</strong><span>submit_s2.html (Lovable URL submission) and submit_s3.html (word cloud reflection). Print or have them ready to paste into session boards during class.</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>Test Firebase connection</strong><span>Open submit_s3.html on your phone, submit a test entry, verify it appears in 03_session3_wrap.html word cloud.</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>Find YouTube clips (have tabs open)</strong><span>"Sweet Ballz Shark Tank" · "Scrub Daddy Shark Tank Lori" · "Steve Jobs iPhone 2007 keynote" — keep all three open in browser tabs.</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>Confirm groups list is visible to students</strong><span>Post on Blackboard before 14:00. Students need to know their group before they walk in.</span></div>
+      </div>
+      <div class="check-item">
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>Open 01_session1_board.html on projector before 14:45</strong><span>Start on the INTRO screen. Students see the arc (Teams → Communication → Negotiation) as they enter.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SESSION 1 ── -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title-block">
+        <h2>Session 1 — The Reality of Communication</h2>
+        <p>14:45–16:15 · Board: 01_session1_board.html</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-block">
+        <div class="tl-time">14:45</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-logistics">Logistics</div>
+          <h4>Intro — The Arc (5 min)</h4>
+          <p>Show INTRO screen. Let students read the stats (93%, etc.). The arc at the top (Teams → Communication → Negotiation) sets context — mention it briefly.</p>
+          <div class="script"><strong>Script</strong>"Last session you worked in teams. You saw how quickly a group either clicks or falls apart. Today we go one layer deeper: how does information actually travel between people? Spoiler: less well than you think. Next session — Negotiation — is where both skills collide. Pay attention today."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">14:50</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-exercise">Exercise</div>
+          <h4>The Hook — Pair Discussion (2 min)</h4>
+          <p>Show HOOK screen. Start the 2-minute timer. Students discuss with the person next to them: "Think of a time a message was completely misunderstood. What happened?"</p>
+          <div class="script"><strong>Script after timer</strong>"Two or three of you — what happened? Keep it short." [Take 2-3 responses.] "Notice: in every single story, someone was convinced they communicated clearly. The receiver had a completely different experience. That gap — between what you sent and what arrived — is what we're here to study."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">14:55</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-exercise">Exercise — Clips</div>
+          <h4>Sweet Ballz vs. Scrub Daddy (15 min)</h4>
+          <p>Show CLIPS screen. Play Sweet Ballz first (find a clip ~2 min). Students watch. Then switch to Scrub Daddy (~3 min). Show the rubric on screen while they watch.</p>
+          <div class="alert alert-tip" style="margin:8px 0;"><strong>Facilitation tip:</strong> Don't explain the rubric — let them notice. After both clips, ask "What's different?" and let them generate the vocabulary. You codify it after.</div>
+          <div class="script"><strong>Debrief script</strong>"Who would have invested in Sweet Ballz? [hands up — usually very few] Who in Scrub Daddy? [most hands] What exactly made the difference?" [Let them talk. They'll arrive at: body language, clarity, energy, structure. Then you reveal the rubric cards.]</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">15:10</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-theory">Theory Flash</div>
+          <h4>Theory 1 — The Distortion Model (8 min)</h4>
+          <p>Show THEORY 1 screen. Walk through the three concept cards. This is a flash — not a lecture. 3 concepts, 2-3 minutes each. Click to reveal as you talk.</p>
+          <div class="script"><strong>On the funnel</strong>"Shannon and Weaver mapped this in 1949. The message you send is not the message that arrives. By the time it passes through encoding, noise, and decoding, it's been through a funnel. Your job as a communicator is to reduce the funnel — not pretend it doesn't exist."</div>
+          <div class="script"><strong>On 7/38/55</strong>"Albert Mehrabian's research: when there's inconsistency between your words and everything else, people trust the 93% — not the 7%. You've all experienced this. When someone says 'I'm fine' but their face says otherwise — you believe the face. Always."</div>
+          <div class="script"><strong>On the gap</strong>"This is the one to remember: you know what you meant. They know what they heard. Those are two different things. And in a company, the cost of that gap is enormous — projects fail, deals fall through, teams fracture. All because someone assumed 'sent' means 'received.'"</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">15:18</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-exercise">Main Exercise</div>
+          <h4>The Brief — Information Distortion Live (25 min)</h4>
+          <p>Show THE BRIEF screen. Move through 4 phases using the phase buttons.</p>
+          <div class="info-grid">
+            <div class="info-card">
+              <h4>Phase 1 — Show text (2 min)</h4>
+              <ul>
+                <li>Read The Brief aloud while showing it</li>
+                <li>Groups have 2 min to write down what they'll do</li>
+                <li>No questions allowed</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <h4>Phase 2 — Execute (5 min)</h4>
+              <ul>
+                <li>Hide the text (click Phase 2 button)</li>
+                <li>Groups write their action plan from memory</li>
+                <li>Each person writes individually — no comparing yet</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <h4>Phase 3 — Compare (5 min)</h4>
+              <ul>
+                <li>Groups compare what each person wrote</li>
+                <li>What's different? What was missed? What changed?</li>
+                <li>No right answers yet — just discovery</li>
+              </ul>
+            </div>
+            <div class="info-card">
+              <h4>Phase 4 — Reveal + Debrief (13 min)</h4>
+              <ul>
+                <li>Show the original brief again</li>
+                <li>Ask 3 debrief questions (click to reveal)</li>
+                <li>Walk through Theory 2 (barriers) right after</li>
+              </ul>
+            </div>
+          </div>
+          <div class="alert alert-tip"><strong>What to watch for:</strong> Some groups will disagree about what the budget was (€15K vs €18K). Some will miss the name "Sofia." Some will have different meeting days ("Thursday" vs "the 20th"). This is gold — surface these specific mistakes in the debrief.</div>
+          <div class="script"><strong>Debrief opening</strong>"Raise your hand if everyone in your group wrote the same things. [pause] Nobody. This is a message I read to you two minutes ago, in the same room, at the same time. Now imagine it's a 30-minute meeting. Or an email chain with 12 people. Or a strategy document passed through three levels of management."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">15:43</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-theory">Theory Flash</div>
+          <h4>Theory 2 — 4 Barriers (8 min)</h4>
+          <p>Show THEORY 2 screen. Click through barrier cards. Students should recognize the barriers from The Brief exercise — use specific examples from the room.</p>
+          <div class="script"><strong>Closing theory line</strong>"Every barrier has a fix. The fix is not 'communicate better' — that's useless advice. The fix is specific: ask for confirmation, choose the right channel, strip out noise. That's what Session 2 is about — building a communication that fights through all of this."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">15:51</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-logistics">Transition</div>
+          <h4>Session 2 Setup (9 min)</h4>
+          <p>Show S2 SETUP screen. Brief the Shark Tank scenario. Tell them their group is already assigned. Give them 5 minutes to find their group and introduce themselves if they don't know each other.</p>
+          <div class="alert alert-warn"><strong>Important:</strong> Tell them explicitly: "During the break, start thinking about what business you'll build. You have 15 minutes before Session 2 starts. Use them."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">16:00</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-logistics">Break</div>
+          <h4>Break — 16:00–16:30</h4>
+          <p>30 minutes. Have 02_session2_board.html ready on the projector for 16:30.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SESSION 2 ── -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title-block">
+        <h2>Session 2 — Build Your Pitch</h2>
+        <p>16:30–18:00 · Board: 02_session2_board.html</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-block">
+        <div class="tl-time">16:30</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-exercise">Video Analysis</div>
+          <h4>The Jobs Test (12 min)</h4>
+          <p>Show JOBS CLIP screen. Play Steve Jobs iPhone 2007 introduction — just the first 90 seconds. Let it run without commentary. Then click through the 6 analysis cards together.</p>
+          <div class="script"><strong>Opening</strong>"Before you build anything, you need to know what good looks like. Watch this. January 2007. This is 90 seconds that changed the world. What is he doing that most people don't?"</div>
+          <div class="alert alert-tip"><strong>Interaction tip:</strong> After the clip, ask students to shout out what they noticed before you reveal the cards. Write 3-4 answers on a whiteboard or just acknowledge them. Then use the cards to structure the analysis.</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">16:42</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-theory">Theory Flash</div>
+          <h4>Theory — Pitch Structure, Cuddy, Non-Verbal (13 min)</h4>
+          <p>Show THEORY screen. Use the 3 tabs. Fast — 4 min each tab maximum. Students can refer back to this on their phones if it's on GitHub Pages.</p>
+          <div class="script"><strong>On pitch structure</strong>"5 steps. 3 minutes. If you can't tell your story in that structure, you don't understand your idea well enough yet. The structure is not a constraint — it's a compression tool."</div>
+          <div class="script"><strong>On Cuddy</strong>"Harvard research. The order matters: warmth first, competence second. If you open with data and facts before you've connected as a human being, people's defenses go up. The sharks in this room are going to decide in the first 20 seconds whether they like you. Give them a reason to."</div>
+          <div class="script"><strong>On non-verbal</strong>"55% is body. The primacy/recency bar is the most practical thing I can give you today: your first sentence and last sentence will be remembered. Everything in between is a blur. Write those two sentences. Rehearse them. Everything else can be improvised."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">16:55</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-ai">Phase 1 — AI Plan</div>
+          <h4>AI Planning with ChatGPT/Claude (15 min)</h4>
+          <p>Show AI PLAN screen. Start the 15-minute timer. Walk around — check that groups are actually planning, not just opening Lovable.</p>
+          <div class="alert alert-danger"><strong>Critical:</strong> Enforce the "no Lovable yet" rule. Students who skip to Lovable immediately will waste credits on a poorly structured page and then panic. Walk around and spot-check.</div>
+          <div class="script"><strong>When starting timer</strong>"You have 15 minutes. Use ChatGPT, Claude, or any AI you have access to. Your goal: structured content for a Lovable landing page. Before you touch Lovable, you need to know your company name, your tagline, your one-sentence problem, your solution, your traction stat, your ask, and all team names with roles. Go."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">17:10</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-ai">Phase 2 — Lovable</div>
+          <h4>Build the Landing Page (25 min)</h4>
+          <p>Show LOVABLE screen. Start the 25-minute timer. The prompt template on screen is a starting point — they should fill in their specific content.</p>
+          <div class="alert alert-warn"><strong>Credit management:</strong> Lovable free tier gives ~5-10 prompts. Encourage one comprehensive prompt. If groups get stuck, suggest they simplify — a clean one-section page beats a broken multi-section one.</div>
+          <div class="script"><strong>5-minute warning</strong>"Five minutes left on Lovable. If you don't have a URL yet, simplify and ship. You need a URL to submit — something is always better than nothing."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">17:35</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-exercise">Phase 3 — Practice</div>
+          <h4>Rehearsal + URL Submission (10 min)</h4>
+          <p>Show PRACTICE screen. Start the 10-minute timer. Students submit their Lovable URL via QR code. While they practice, you can open your dashboard to see who has submitted.</p>
+          <div class="alert alert-info"><strong>Dashboard:</strong> Go to Firebase console → negotiation-class project → Realtime Database → communication-s2 to see all submissions with URLs in real time.</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">17:45</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-exercise">Phase 4 — Shark Tank</div>
+          <h4>The Pitches (15 min)</h4>
+          <p>Show SHARKS screen. Select 3-4 groups to pitch (groups that submitted URLs and seemed prepared). Use the 3-min timer per group. After each pitch: 30 sec of shark questions from classmates.</p>
+          <div class="script"><strong>Opening Shark Tank</strong>"Sharks — you each have €500,000. You can invest in one or multiple groups. By the end of the pitches, you'll decide where your money goes. First pitch: [Group name]. 3 minutes. Timer starts when you're ready."</div>
+          <div class="script"><strong>After each pitch</strong>"Sharks — 30 seconds. Hardest question you have. Go." [After the question is answered:] "Next group."</div>
+          <div class="alert alert-tip"><strong>Facilitation:</strong> If no group volunteers, pick the one whose landing page URL looked most prepared from your dashboard. Confidence comes from preparation — reward it.</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">17:55</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-theory">Debrief</div>
+          <h4>Debrief + S3 Preview (5 min)</h4>
+          <p>Show DEBRIEF screen. Ask 2 of the 4 questions — don't rush through all of them. The goal is to land the key insight before they leave.</p>
+          <div class="script"><strong>Closing line</strong>"The landing page was a tool. The pitch was the test. And what you just experienced — building something under pressure and then defending it — is a simulation of the most important communication you'll ever do. Next session, we close the day and I want to know what you actually learned."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SESSION 3 ── -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title-block">
+        <h2>Session 3 — The Wrap</h2>
+        <p>18:15–18:50 · Board: 03_session3_wrap.html</p>
+      </div>
+    </div>
+
+    <div class="alert alert-info" style="margin-bottom:16px;"><strong>Goal:</strong> 30 minutes max. Attendance via word cloud submission. Professor reads from the live responses. 3 takeaways. Bridge to Negotiation. Students leave by 18:50.</div>
+
+    <div class="timeline">
+      <div class="tl-block">
+        <div class="tl-time">18:15</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-logistics">Attendance</div>
+          <h4>QR Scan + Submit (5 min)</h4>
+          <p>Show ATTENDANCE screen. Project QR code. Students scan → fill 3 questions → submit. This replaces a traditional attendance roll. The submission IS the attendance record.</p>
+          <div class="alert alert-warn"><strong>Honor code:</strong> Students know that not submitting = not attending. You can see the names list in real time on the Word Cloud screen. If someone is physically in the room and not submitting, remind them verbally.</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">18:20</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-exercise">Live Word Cloud</div>
+          <h4>Read the Room (10 min)</h4>
+          <p>Switch to WORD CLOUD screen. Show the word cloud tab on the projector as it fills in real time. Narrate what you see — pick 3-4 interesting responses from the text panel and read them aloud.</p>
+          <div class="script"><strong>Reading the cloud</strong>"Look at what's appearing. [read top 3-4 words aloud] Let me read a few responses. [switch to Full Responses tab, read 2-3 anonymously or by name if they're comfortable] This is what actually landed today — not what I planned to teach. Notice what surprised you."</div>
+          <div class="alert alert-tip"><strong>Facilitation tip:</strong> The words that appear most often are your real takeaways. Build your next 5 minutes around them — not your prepared script. This is the most powerful moment of the day when it works.</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">18:30</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-theory">Synthesis</div>
+          <h4>3 Takeaways (10 min)</h4>
+          <p>Show TAKEAWAYS screen. Walk through the 3 cards. Connect them explicitly to what students wrote in the word cloud. End with the bridge to Negotiation.</p>
+          <div class="script"><strong>Bridge to Negotiation</strong>"You've now done Teams and Communication. Negotiation is where these collide under pressure. You'll need to read another person in real time, adjust your communication strategy mid-conversation, and manage the gap between what they say and what they mean. Everything you practiced today — the brief, the pitch, the non-verbal awareness — shows up there. See you next time."</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-time">18:45</div>
+        <div class="tl-bar"></div>
+        <div class="tl-content">
+          <div class="tag tag-logistics">Close</div>
+          <h4>Done — Students Leave Early (~18:50)</h4>
+          <p>Show DONE screen. No lingering — thank them briefly and let them go. Early ending is the reward for a full day of engagement.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FILES ── -->
+  <div class="section" id="files">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title-block">
+        <h2>Files — What Does What</h2>
+        <p>All files are in /communication/ folder. Host on GitHub Pages.</p>
+      </div>
+    </div>
+
+    <table class="files-table">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Used By</th>
+          <th>What It Does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>00_professor_guide.html</code></td>
+          <td>Professor only</td>
+          <td>This file. Full playbook. Never projected to students.</td>
+        </tr>
+        <tr>
+          <td><code>01_session1_board.html</code></td>
+          <td>Projector — Session 1</td>
+          <td>Session 1 live board. INTRO → HOOK → CLIPS → THEORY 1 → THE BRIEF → THEORY 2 → S2 SETUP</td>
+        </tr>
+        <tr>
+          <td><code>02_session2_board.html</code></td>
+          <td>Projector — Session 2</td>
+          <td>Session 2 live board. INTRO → JOBS CLIP → THEORY → AI PLAN → LOVABLE → PRACTICE → SHARKS → DEBRIEF</td>
+        </tr>
+        <tr>
+          <td><code>03_session3_wrap.html</code></td>
+          <td>Projector — Session 3</td>
+          <td>Session 3 wrap. ATTENDANCE → WORD CLOUD (live Firebase) → TAKEAWAYS → DONE</td>
+        </tr>
+        <tr>
+          <td><code>submit_s2.html</code></td>
+          <td>Students — phone / QR</td>
+          <td>Form: group name + member names + Lovable URL + one-sentence pitch. Saves to Firebase communication-s2/</td>
+        </tr>
+        <tr>
+          <td><code>submit_s3.html</code></td>
+          <td>Students — phone / QR</td>
+          <td>Form: name + 3 reflection questions. Saves to Firebase communication-s3/. Powers the word cloud.</td>
+        </tr>
+        <tr>
+          <td><code>firebase-config.js</code></td>
+          <td>All HTML files</td>
+          <td>Firebase project config. Same project as negotiation module (negotiation-class). Keep gitignored or use GitHub Actions secrets.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info" style="margin-top:16px;"><strong>Firebase database paths:</strong> Lovable submissions → <code>communication-s2/</code> · Word cloud submissions → <code>communication-s3/</code>. No collision with negotiation data (which uses <code>negotiation-s1/</code> etc).</div>
+    <div class="alert alert-warn" style="margin-top:12px;"><strong>QR codes to generate:</strong> (1) submit_s2.html — place in PRACTICE screen of 02_session2_board.html · (2) submit_s3.html — place in ATTENDANCE screen of 03_session3_wrap.html. Both currently have placeholder squares marked "ADD QR CODE".</div>
+  </div>
+</div>
+
+<script>
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+    el.textContent = el.classList.contains('checked') ? '✓' : '';
+  }
+</script>
+</body>
+</html>
