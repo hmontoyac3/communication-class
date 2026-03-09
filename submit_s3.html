@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reflexión Final | Communication</title>
+<title>End of Day Reflection | Communication</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -38,42 +38,42 @@
 </head>
 <body>
 <div class="card">
-  <div class="badge">SESIÓN 3 — REFLEXIÓN</div>
-  <h1>3 COSAS<br><span>HOY.</span></h1>
-  <div class="sub">Responde con honestidad. Tu nombre aparece en el dashboard del profesor, pero las respuestas son tuyas — nadie las juzga.</div>
+  <div class="badge">SESSION 3 — REFLECTION</div>
+  <h1>3 THINGS<br><span>TODAY.</span></h1>
+  <div class="sub">Answer honestly. Your name is visible to the professor, but your answers are yours — no judgment.</div>
 
   <div id="form-section">
     <div class="name-field">
-      <label>Tu nombre completo *</label>
+      <label>Your full name *</label>
       <input type="text" id="f-name" placeholder="Sofia Rossi" />
     </div>
 
     <div class="field">
-      <label>Pregunta 1</label>
-      <div class="q-text">Una cosa que <em>NO</em> sabía antes de hoy:</div>
-      <textarea id="f-q1" placeholder="Escribe aquí..."></textarea>
+      <label>Question 1</label>
+      <div class="q-text">One thing I did <em>NOT</em> know before today:</div>
+      <textarea id="f-q1" placeholder="Write here..."></textarea>
     </div>
 
     <div class="field">
-      <label>Pregunta 2</label>
-      <div class="q-text">Algo que voy a hacer diferente:</div>
-      <textarea id="f-q2" placeholder="Escribe aquí..."></textarea>
+      <label>Question 2</label>
+      <div class="q-text">Something I will do differently:</div>
+      <textarea id="f-q2" placeholder="Write here..."></textarea>
     </div>
 
     <div class="field">
-      <label>Pregunta 3 — Una sola palabra</label>
-      <div class="q-text">Una palabra que resume el día:</div>
-      <input type="text" id="f-word" class="word-input" placeholder="ESCUCHAR" maxlength="30" />
+      <label>Question 3 — One word only</label>
+      <div class="q-text">One word that sums up the day:</div>
+      <input type="text" id="f-word" class="word-input" placeholder="CLARITY" maxlength="30" />
     </div>
 
-    <div class="error-msg" id="err-msg">Por favor rellena todos los campos.</div>
-    <button class="submit-btn" id="submit-btn" onclick="submitForm()">ENVIAR REFLEXIÓN →</button>
+    <div class="error-msg" id="err-msg">Please fill in all fields.</div>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">SUBMIT →</button>
   </div>
 
   <div class="success" id="success-section">
     <div class="success-icon">✓</div>
-    <h2>ENVIADO.</h2>
-    <p>Tu reflexión aparece en el word cloud.<br>Gracias por hoy — nos vemos en la próxima sesión.</p>
+    <h2>SUBMITTED.</h2>
+    <p>Your word is now live on the screen.<br>See you next session.</p>
   </div>
 </div>
 
@@ -96,7 +96,7 @@
     }
     document.getElementById('err-msg').style.display = 'none';
     document.getElementById('submit-btn').disabled = true;
-    document.getElementById('submit-btn').textContent = 'ENVIANDO...';
+    document.getElementById('submit-btn').textContent = 'SUBMITTING...';
 
     const ref = db.ref('communication-s3/' + Date.now());
     ref.set({
@@ -110,7 +110,7 @@
       document.getElementById('success-section').style.display = 'block';
     }).catch(err => {
       document.getElementById('submit-btn').disabled = false;
-      document.getElementById('submit-btn').textContent = 'ENVIAR REFLEXIÓN →';
+      document.getElementById('submit-btn').textContent = 'SUBMIT →';
       document.getElementById('err-msg').textContent = 'Error: ' + err.message;
       document.getElementById('err-msg').style.display = 'block';
     });
