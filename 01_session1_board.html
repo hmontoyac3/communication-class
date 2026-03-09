@@ -375,6 +375,56 @@
         </div>
       </div>
     </div>
+
+    <!-- LIVE FEED panel — inside clips-screen so it renders correctly -->
+    <div class="clip-panel-live" id="clip-live">
+      <div class="live-left">
+        <div class="live-count-box">
+          <div class="live-count-num" id="live-count-main">0</div>
+          <div class="live-count-label">ratings received</div>
+        </div>
+        <div class="live-qr-box">
+          <img src="qr_submit_s1.png" style="width:140px;height:140px;display:block;margin:0 auto 6px;" alt="QR" />
+          <div>submit_s1.html</div>
+        </div>
+        <div class="live-word-cloud-box" id="live-wordcloud">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Words appear here...</div>
+        </div>
+      </div>
+      <div class="live-right">
+        <div class="scores-grid">
+          <div class="score-card">
+            <div class="score-card-header"><div class="score-clip-badge bad">CLIP 1</div><div class="score-clip-name">Sweet Ballz</div></div>
+            <div class="score-dim"><div class="score-dim-label">🎙 Voice <span id="c1-voice-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-voice-bar"></div></div></div>
+            <div class="score-dim"><div class="score-dim-label">🧍 Body language <span id="c1-body-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-body-bar"></div></div></div>
+            <div class="score-dim"><div class="score-dim-label">📐 Structure <span id="c1-structure-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-structure-bar"></div></div></div>
+            <div class="score-dim"><div class="score-dim-label">🤝 Connection <span id="c1-connection-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-connection-bar"></div></div></div>
+            <div class="invest-tally">
+              <div class="invest-pill yes"><div class="invest-pill-num" id="c1-yes">0</div>YES</div>
+              <div class="invest-pill no"><div class="invest-pill-num" id="c1-no">0</div>NO</div>
+              <div class="invest-pill maybe"><div class="invest-pill-num" id="c1-maybe">0</div>MAYBE</div>
+            </div>
+          </div>
+          <div class="score-card">
+            <div class="score-card-header"><div class="score-clip-badge good">CLIP 2</div><div class="score-clip-name">Scrub Daddy</div></div>
+            <div class="score-dim"><div class="score-dim-label">🎙 Voice <span id="c2-voice-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-voice-bar"></div></div></div>
+            <div class="score-dim"><div class="score-dim-label">🧍 Body language <span id="c2-body-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-body-bar"></div></div></div>
+            <div class="score-dim"><div class="score-dim-label">📐 Structure <span id="c2-structure-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-structure-bar"></div></div></div>
+            <div class="score-dim"><div class="score-dim-label">🤝 Connection <span id="c2-connection-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-connection-bar"></div></div></div>
+            <div class="invest-tally">
+              <div class="invest-pill yes"><div class="invest-pill-num" id="c2-yes">0</div>YES</div>
+              <div class="invest-pill no"><div class="invest-pill-num" id="c2-no">0</div>NO</div>
+              <div class="invest-pill maybe"><div class="invest-pill-num" id="c2-maybe">0</div>MAYBE</div>
+            </div>
+          </div>
+        </div>
+        <div class="live-names">
+          <div class="live-names-label">Submitted</div>
+          <div class="live-names-list" id="live-names-list"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -679,62 +729,6 @@
     </div>
   </div>
 
-  <!-- LIVE FEED panel -->
-  <div class="clip-panel-live" id="clip-live">
-    <div class="live-left">
-      <div class="live-count-box">
-        <div class="live-count-num" id="live-count-main">0</div>
-        <div class="live-count-label">ratings received</div>
-      </div>
-      <div class="live-qr-box">
-        <img src="qr_submit_s1.png" style="width:140px;height:140px;display:block;margin:0 auto 6px;" alt="QR" />
-        <div>submit_s1.html</div>
-      </div>
-      <div class="live-word-cloud-box" id="live-wordcloud">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Words appear here...</div>
-      </div>
-    </div>
-    <div class="live-right">
-      <div class="scores-grid">
-        <!-- Clip 1 scores -->
-        <div class="score-card">
-          <div class="score-card-header">
-            <div class="score-clip-badge bad">CLIP 1</div>
-            <div class="score-clip-name">Sweet Ballz</div>
-          </div>
-          <div class="score-dim"><div class="score-dim-label">🎙 Voice <span id="c1-voice-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-voice-bar"></div></div></div>
-          <div class="score-dim"><div class="score-dim-label">🧍 Body language <span id="c1-body-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-body-bar"></div></div></div>
-          <div class="score-dim"><div class="score-dim-label">📐 Structure <span id="c1-structure-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-structure-bar"></div></div></div>
-          <div class="score-dim"><div class="score-dim-label">🤝 Connection <span id="c1-connection-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill bad" id="c1-connection-bar"></div></div></div>
-          <div class="invest-tally">
-            <div class="invest-pill yes"><div class="invest-pill-num" id="c1-yes">0</div>YES</div>
-            <div class="invest-pill no"><div class="invest-pill-num" id="c1-no">0</div>NO</div>
-            <div class="invest-pill maybe"><div class="invest-pill-num" id="c1-maybe">0</div>MAYBE</div>
-          </div>
-        </div>
-        <!-- Clip 2 scores -->
-        <div class="score-card">
-          <div class="score-card-header">
-            <div class="score-clip-badge good">CLIP 2</div>
-            <div class="score-clip-name">Scrub Daddy</div>
-          </div>
-          <div class="score-dim"><div class="score-dim-label">🎙 Voice <span id="c2-voice-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-voice-bar"></div></div></div>
-          <div class="score-dim"><div class="score-dim-label">🧍 Body language <span id="c2-body-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-body-bar"></div></div></div>
-          <div class="score-dim"><div class="score-dim-label">📐 Structure <span id="c2-structure-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-structure-bar"></div></div></div>
-          <div class="score-dim"><div class="score-dim-label">🤝 Connection <span id="c2-connection-val">—</span>/5</div><div class="score-bar-bg"><div class="score-bar-fill good" id="c2-connection-bar"></div></div></div>
-          <div class="invest-tally">
-            <div class="invest-pill yes"><div class="invest-pill-num" id="c2-yes">0</div>YES</div>
-            <div class="invest-pill no"><div class="invest-pill-num" id="c2-no">0</div>NO</div>
-            <div class="invest-pill maybe"><div class="invest-pill-num" id="c2-maybe">0</div>MAYBE</div>
-          </div>
-        </div>
-      </div>
-      <!-- Recent names -->
-      <div class="live-names">
-        <div class="live-names-label">Submitted</div>
-        <div class="live-names-list" id="live-names-list"></div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -761,6 +755,8 @@ function showClipLive() {
   document.querySelectorAll('.clip-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('clip-live').classList.add('active');
   document.querySelectorAll('.clip-tab')[2].classList.add('active');
+  // make live panel fill the screen height
+  document.getElementById('clip-live').style.height = '100%';
 }
 
 // ── Live Firebase ratings ──
