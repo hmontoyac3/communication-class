@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Round 1 Squad — Communication 30288</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a12;--surface:#13131f;--border:#2a2a3e;--text:#e8e8f0;--muted:#9898b2;--accent:#5b7da6;--green:#2ed573;--red:#ff4757}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:Barlow,Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
+  .card{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--green);max-width:560px;width:100%;padding:32px 28px}
+  .badge{display:inline-block;background:var(--green);color:#07130b;font-family:'Barlow Condensed',Arial,sans-serif;font-size:12px;font-weight:900;letter-spacing:2.3px;padding:5px 12px;margin-bottom:16px}
+  h1{font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:52px;letter-spacing:1.5px;line-height:.98;margin-bottom:10px}
+  .sub{color:var(--muted);font-size:16px;line-height:1.45;margin-bottom:22px}
+  .identity{display:grid;grid-template-columns:92px 1fr;gap:14px;margin:18px 0}
+  .number{display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--border);font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:58px;color:var(--green)}
+  .topic{background:var(--bg);border:1px solid var(--border);padding:13px 15px}
+  .topic span{display:block;font-family:'Barlow Condensed',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.7px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+  .topic strong{font-family:'Barlow Condensed',Arial,sans-serif;font-size:25px;letter-spacing:.7px;text-transform:uppercase}
+  .roster{list-style:none;margin:8px 0 18px}
+  .roster li{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);padding:11px 4px;font-size:19px}
+  .roster li:before{content:'✓';display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(46,213,115,.12);color:var(--green);font-weight:700}
+  .status{font-family:'Barlow Condensed',Arial,sans-serif;font-size:14px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+  .instruction{background:var(--bg);border:1px solid var(--border);padding:15px;font-size:16px;line-height:1.45;color:var(--muted)}
+  .instruction strong{color:var(--text)}
+  .error{display:none;color:var(--red);font-size:16px;line-height:1.45}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main class="card">
+  <section id="loading">
+    <div class="badge">ROUND 1 · YOUR SQUAD</div>
+    <h1>FIND YOUR<br>FOUR PEOPLE.</h1>
+    <p class="sub">Your squad is loading. Keep this page open—the names update live as the room finishes the topic assignment.</p>
+  </section>
+
+  <section id="group" style="display:none">
+    <div class="badge">ROUND 1 · YOUR SQUAD</div>
+    <h1 id="hello">THIS IS YOUR GROUP.</h1>
+    <div class="identity">
+      <div class="number" id="group-code">—</div>
+      <div class="topic"><span>Your topic</span><strong id="topic">—</strong></div>
+    </div>
+    <div class="status" id="status">Finding your squad…</div>
+    <ul class="roster" id="roster"></ul>
+    <div class="instruction"><strong>Go straight to these people.</strong><br>Bring your page, your pitch and the scoring sheet. Your squad will hear five pitches and select one winner.</div>
+  </section>
+
+  <section class="error" id="error">
+    <div class="badge">ASSIGNMENT NOT FOUND</div>
+    <h1>GET YOUR TOPIC FIRST.</h1>
+    <p class="sub">Open the topic-assignment page on this same phone, then return here.</p>
+    <a href="topic_assignment.html">Go to topic assignment →</a>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+const SESSION_PARTS=Object.fromEntries(new Intl.DateTimeFormat('en',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+const SESSION_KEY=SESSION_PARTS.year+'-'+SESSION_PARTS.month+'-'+SESSION_PARTS.day;
+const STORAGE_KEY='communicationTopicAssignmentV2-'+SESSION_KEY;
+let mine=null;
+
+function showError(){
+  document.getElementById('loading').style.display='none';
+  document.getElementById('group').style.display='none';
+  document.getElementById('error').style.display='block';
+}
+function renderRoster(assignments){
+  const peers=Object.values(assignments||{}).filter(a=>Number(a.topicNumber)===Number(mine.topicNumber)&&Number(a.squadNumber)===Number(mine.squadNumber)).sort((a,b)=>(a.order||0)-(b.order||0));
+  document.getElementById('loading').style.display='none';
+  document.getElementById('group').style.display='block';
+  document.getElementById('hello').textContent=(mine.studentName||'Your')+', this is your group.';
+  document.getElementById('group-code').textContent=mine.topicNumber+mine.squadLabel;
+  document.getElementById('topic').textContent=mine.topicTitle;
+  document.getElementById('status').textContent=peers.length>=5?'Your squad is ready':peers.length+' of 5 people assigned · updating live';
+  const roster=document.getElementById('roster'); roster.innerHTML='';
+  peers.forEach(person=>{ const li=document.createElement('li'); li.textContent=person.studentName||'Student'; roster.appendChild(li); });
+}
+(function init(){
+  try{ mine=JSON.parse(localStorage.getItem(STORAGE_KEY)); }catch(err){}
+  if(!mine||!mine.assignmentId||!mine.topicNumber||!mine.squadNumber){ showError(); return; }
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+    firebase.database().ref('communication-topic-assignment/'+SESSION_KEY+'/assignments').on('value',snap=>renderRoster(snap.val()||{}),showError);
+  }catch(err){ showError(); console.error(err); }
+})();
+</script>
+</body>
+</html>

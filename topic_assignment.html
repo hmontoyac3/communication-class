@@ -14,6 +14,10 @@
   h1{font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:54px;letter-spacing:1.5px;line-height:.98;margin-bottom:12px}
   h1 span{color:var(--accent)}
   .sub{color:var(--muted);font-size:17px;line-height:1.5;margin-bottom:26px}
+  .field{margin-bottom:18px}
+  label{display:block;font-family:'Barlow Condensed',Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font:17px Barlow,Arial,sans-serif;padding:13px 14px;outline:none}
+  input:focus{border-color:var(--accent)}
   button{width:100%;border:0;background:var(--accent);color:#fff;font-family:'Barlow Condensed',Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:16px;cursor:pointer}
   button:disabled{opacity:.45;cursor:not-allowed}
   .error{display:none;color:var(--red);font-size:14px;line-height:1.4;margin-top:14px}
@@ -30,7 +34,11 @@
   <section id="start">
     <div class="badge">YOUR TOPIC · PART B</div>
     <h1>FIND YOUR<br><span>NUMBER.</span></h1>
-    <p class="sub">One tap assigns you to one of five balanced topic groups. Your idea will be your own; the topic is simply your starting point.</p>
+    <p class="sub">The page assigns you to one of five balanced topics. Your name will also be used to show your first-round squad later.</p>
+    <div class="field">
+      <label for="student-name">First name + surname initial</label>
+      <input id="student-name" type="text" maxlength="60" placeholder="Example: Giulia R." autocomplete="name">
+    </div>
     <button id="assign" type="button" onclick="assignTopic()">Show me my topic →</button>
     <div class="error" id="error">We could not assign a topic yet. Check the connection and try again.</div>
   </section>
@@ -39,7 +47,7 @@
     <div class="badge">THIS IS YOUR TOPIC GROUP</div>
     <div class="number" id="number">—</div>
     <div class="topic" id="topic">—</div>
-    <div class="instruction"><strong>Take a screenshot.</strong><br>Stay where you are for now. In Part C, move to the zone with this number.</div>
+    <div class="instruction"><strong>Take a screenshot.</strong><br>Stay where you are for now. In Part C, a second QR will show your first-round squad and the four people you need to find.</div>
     <p class="tiny">Opening this page again on the same device will show the same assignment.</p>
   </section>
 </main>
@@ -49,7 +57,9 @@
 <script src="firebase-config.js"></script>
 <script>
 const TOPICS=['Learn Better','Live Better','Belong Better','Campus Greener','Future Ready'];
-const STORAGE_KEY='communicationTopicAssignmentV1';
+const SESSION_PARTS=Object.fromEntries(new Intl.DateTimeFormat('en',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+const SESSION_KEY=SESSION_PARTS.year+'-'+SESSION_PARTS.month+'-'+SESSION_PARTS.day;
+const STORAGE_KEY='communicationTopicAssignmentV2-'+SESSION_KEY;
 
 function showAssignment(assignment){
   document.getElementById('number').textContent=assignment.topicNumber;
@@ -59,23 +69,26 @@ function showAssignment(assignment){
 }
 function assignTopic(){
   const button=document.getElementById('assign'), error=document.getElementById('error');
+  const studentName=document.getElementById('student-name').value.trim();
+  if(!studentName){ error.textContent='Add your first name and surname initial.'; error.style.display='block'; return; }
   button.disabled=true; button.textContent='Assigning…'; error.style.display='none';
   try{
     if(!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
     const assignmentId='a-'+Date.now()+'-'+Math.random().toString(36).slice(2,10);
-    const ref=firebase.database().ref('communication-topic-assignment');
+    const ref=firebase.database().ref('communication-topic-assignment/'+SESSION_KEY);
     ref.transaction(state=>{
       state=state||{next:0,assignments:{}};
       state.assignments=state.assignments||{};
       if(state.assignments[assignmentId]) return state;
       const next=Number(state.next)||0, topicNumber=(next%TOPICS.length)+1;
+      const topicSeat=Math.floor(next/TOPICS.length), squadNumber=Math.floor(topicSeat/5)+1;
       state.next=next+1;
-      state.assignments[assignmentId]={topicNumber,topicTitle:TOPICS[topicNumber-1],assignedAt:new Date().toISOString()};
+      state.assignments[assignmentId]={studentName,topicNumber,topicTitle:TOPICS[topicNumber-1],topicSeat,squadNumber,squadLabel:String.fromCharCode(64+squadNumber),order:next,assignedAt:new Date().toISOString()};
       return state;
     },(err,committed,snapshot)=>{
       if(err||!committed){ showError(err); return; }
       const assignment=snapshot.val().assignments[assignmentId];
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(assignment));
+      localStorage.setItem(STORAGE_KEY,JSON.stringify({assignmentId,sessionKey:SESSION_KEY,...assignment}));
       showAssignment(assignment);
     },false);
   }catch(err){ showError(err); }
