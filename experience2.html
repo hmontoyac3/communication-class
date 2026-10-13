@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chinese Whispers — Prediction</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a12;--surface:#13131f;--border:#2a2a3e;--text:#e8e8f0;--muted:#8989a6;--accent:#5b7da6;--green:#2ed573;--red:#ff4757}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:Barlow,Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
+  .card{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);max-width:520px;width:100%;padding:34px 30px}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-family:'Barlow Condensed',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:2.5px;padding:5px 12px;margin-bottom:16px}
+  h1{font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:48px;letter-spacing:1.5px;line-height:.98;margin-bottom:10px}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);font-size:16px;line-height:1.45;margin-bottom:26px}
+  .field{margin-bottom:18px}
+  label{display:block;font-family:'Barlow Condensed',Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font:16px Barlow,Arial,sans-serif;padding:13px 14px;outline:none}
+  input:focus{border-color:var(--accent)}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  button{width:100%;border:0;background:var(--accent);color:#fff;font-family:'Barlow Condensed',Arial,sans-serif;font-size:17px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:15px;cursor:pointer;margin-top:4px}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .error{display:none;color:var(--red);font-size:14px;margin:2px 0 12px}
+  .success{display:none;text-align:center;padding:30px 0}
+  .success .check{font-size:52px;color:var(--green);margin-bottom:12px}
+  .success h2{font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:46px;letter-spacing:1.5px;color:var(--green);margin-bottom:8px}
+  .success p{color:var(--muted);font-size:16px;line-height:1.5}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="badge">EXPERIENCE 2 · CHINESE WHISPERS</div>
+  <h1>WHAT WILL<br><span>GET LOST?</span></h1>
+  <p class="sub">The message is moving through the chain. Predict two details that will disappear or change before it reaches the last person.</p>
+
+  <section id="form-section">
+    <div class="field">
+      <label for="f-pair">Your names or pair name</label>
+      <input id="f-pair" type="text" maxlength="80" placeholder="Optional" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="f-first">First detail *</label>
+      <input id="f-first" type="text" maxlength="100" placeholder="What will disappear or change?">
+    </div>
+    <div class="field">
+      <label for="f-second">Second detail *</label>
+      <input id="f-second" type="text" maxlength="100" placeholder="What else?">
+      <div class="hint">Short phrases work best. Your predictions appear live on the classroom screen.</div>
+    </div>
+    <div class="error" id="error">Add two predictions before submitting.</div>
+    <button id="submit" type="button" onclick="submitPrediction()">Send predictions →</button>
+  </section>
+
+  <section class="success" id="success">
+    <div class="check">✓</div>
+    <h2>YOU'RE LIVE.</h2>
+    <p>Your two predictions are now on the classroom screen.<br>Watch what happens to the real message.</p>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+function submitPrediction(){
+  const pair=document.getElementById('f-pair').value.trim();
+  const first=document.getElementById('f-first').value.trim();
+  const second=document.getElementById('f-second').value.trim();
+  const error=document.getElementById('error');
+  if(!first||!second){ error.style.display='block'; return; }
+  error.style.display='none';
+  const button=document.getElementById('submit');
+  button.disabled=true; button.textContent='Sending…';
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+    const key=Date.now()+'-'+Math.random().toString(36).slice(2,8);
+    firebase.database().ref('communication-experience2/'+key).set({
+      pair:pair||'Anonymous pair', prediction1:first, prediction2:second, timestamp:new Date().toISOString()
+    }).then(()=>{
+      document.getElementById('form-section').style.display='none';
+      document.getElementById('success').style.display='block';
+    }).catch(showError);
+  }catch(err){ showError(err); }
+}
+function showError(err){
+  const error=document.getElementById('error');
+  error.textContent='Could not send yet. Check the connection and try again.';
+  error.style.display='block';
+  const button=document.getElementById('submit');
+  button.disabled=false; button.textContent='Send predictions →';
+  console.error(err);
+}
+</script>
+</body>
+</html>
