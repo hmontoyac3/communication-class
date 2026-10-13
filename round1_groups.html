@@ -45,7 +45,7 @@
     </div>
     <div class="status" id="status">Finding your squad…</div>
     <ul class="roster" id="roster"></ul>
-    <div class="instruction"><strong>Go straight to these people.</strong><br>Bring your page, your pitch and the scoring sheet. Your squad will hear five pitches and select one winner.</div>
+    <div class="instruction"><strong>Go straight to these people.</strong><br>Bring your page, your pitch and the scoring sheet. Everyone in your squad will pitch, then you will select one winner.</div>
   </section>
 
   <section class="error" id="error">
@@ -71,19 +71,37 @@ function showError(){
   document.getElementById('error').style.display='block';
 }
 function renderRoster(assignments){
-  const peers=Object.values(assignments||{}).filter(a=>Number(a.topicNumber)===Number(mine.topicNumber)&&Number(a.squadNumber)===Number(mine.squadNumber)).sort((a,b)=>(a.order||0)-(b.order||0));
+  const topicPeople=Object.entries(assignments||{})
+    .map(([assignmentId,a])=>({assignmentId,...a}))
+    .filter(a=>Number(a.topicNumber)===Number(mine.topicNumber))
+    .sort((a,b)=>(a.order||0)-(b.order||0));
+  const myIndex=topicPeople.findIndex(a=>a.assignmentId===mine.assignmentId);
+  if(myIndex<0){ showError(); return; }
+
+  // Build balanced squads only after seeing the real topic total. Around five
+  // people per squad means 26 students become 6–5–5–5–5, never 5–5–5–5–5–1.
+  const squadCount=Math.max(1,Math.round(topicPeople.length/5));
+  const baseSize=Math.floor(topicPeople.length/squadCount);
+  const largerSquads=topicPeople.length%squadCount;
+  let start=0, squadIndex=0, peers=[];
+  for(let i=0;i<squadCount;i++){
+    const size=baseSize+(i<largerSquads?1:0), end=start+size;
+    if(myIndex>=start&&myIndex<end){ squadIndex=i; peers=topicPeople.slice(start,end); break; }
+    start=end;
+  }
+  const squadLabel=String.fromCharCode(65+squadIndex);
   document.getElementById('loading').style.display='none';
   document.getElementById('group').style.display='block';
   document.getElementById('hello').textContent=(mine.studentName||'Your')+', this is your group.';
-  document.getElementById('group-code').textContent=mine.topicNumber+mine.squadLabel;
+  document.getElementById('group-code').textContent=mine.topicNumber+squadLabel;
   document.getElementById('topic').textContent=mine.topicTitle;
-  document.getElementById('status').textContent=peers.length>=5?'Your squad is ready':peers.length+' of 5 people assigned · updating live';
+  document.getElementById('status').textContent=peers.length+' people · balanced from '+topicPeople.length+' in this topic';
   const roster=document.getElementById('roster'); roster.innerHTML='';
   peers.forEach(person=>{ const li=document.createElement('li'); li.textContent=person.studentName||'Student'; roster.appendChild(li); });
 }
 (function init(){
   try{ mine=JSON.parse(localStorage.getItem(STORAGE_KEY)); }catch(err){}
-  if(!mine||!mine.assignmentId||!mine.topicNumber||!mine.squadNumber){ showError(); return; }
+  if(!mine||!mine.assignmentId||!mine.topicNumber){ showError(); return; }
   try{
     if(!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
     firebase.database().ref('communication-topic-assignment/'+SESSION_KEY+'/assignments').on('value',snap=>renderRoster(snap.val()||{}),showError);
