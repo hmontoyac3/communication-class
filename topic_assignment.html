@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Topic — Communication 30288</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0a12;--surface:#13131f;--border:#2a2a3e;--text:#e8e8f0;--muted:#9898b2;--accent:#5b7da6;--green:#2ed573;--red:#ff4757}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:Barlow,Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
+  .card{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);max-width:540px;width:100%;padding:34px 30px}
+  .badge{display:inline-block;background:var(--accent);color:#fff;font-family:'Barlow Condensed',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:2.5px;padding:5px 12px;margin-bottom:16px}
+  h1{font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:54px;letter-spacing:1.5px;line-height:.98;margin-bottom:12px}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);font-size:17px;line-height:1.5;margin-bottom:26px}
+  button{width:100%;border:0;background:var(--accent);color:#fff;font-family:'Barlow Condensed',Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:16px;cursor:pointer}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .error{display:none;color:var(--red);font-size:14px;line-height:1.4;margin-top:14px}
+  .result{display:none;text-align:center}
+  .number{font-family:'Bebas Neue','Arial Narrow',sans-serif;font-size:132px;line-height:.85;color:var(--green);margin:14px 0 5px}
+  .topic{font-family:'Barlow Condensed',Arial,sans-serif;font-size:32px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+  .instruction{background:var(--bg);border:1px solid var(--border);padding:16px;font-size:16px;line-height:1.45;color:var(--muted)}
+  .instruction strong{color:var(--text)}
+  .tiny{font-size:12px;line-height:1.4;color:var(--muted);margin-top:18px;text-align:center}
+</style>
+</head>
+<body>
+<main class="card">
+  <section id="start">
+    <div class="badge">YOUR TOPIC · PART B</div>
+    <h1>FIND YOUR<br><span>NUMBER.</span></h1>
+    <p class="sub">One tap assigns you to one of five balanced topic groups. Your idea will be your own; the topic is simply your starting point.</p>
+    <button id="assign" type="button" onclick="assignTopic()">Show me my topic →</button>
+    <div class="error" id="error">We could not assign a topic yet. Check the connection and try again.</div>
+  </section>
+
+  <section class="result" id="result">
+    <div class="badge">THIS IS YOUR TOPIC GROUP</div>
+    <div class="number" id="number">—</div>
+    <div class="topic" id="topic">—</div>
+    <div class="instruction"><strong>Take a screenshot.</strong><br>Stay where you are for now. In Part C, move to the zone with this number.</div>
+    <p class="tiny">Opening this page again on the same device will show the same assignment.</p>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+const TOPICS=['Learn Better','Live Better','Belong Better','Campus Greener','Future Ready'];
+const STORAGE_KEY='communicationTopicAssignmentV1';
+
+function showAssignment(assignment){
+  document.getElementById('number').textContent=assignment.topicNumber;
+  document.getElementById('topic').textContent=assignment.topicTitle;
+  document.getElementById('start').style.display='none';
+  document.getElementById('result').style.display='block';
+}
+function assignTopic(){
+  const button=document.getElementById('assign'), error=document.getElementById('error');
+  button.disabled=true; button.textContent='Assigning…'; error.style.display='none';
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+    const assignmentId='a-'+Date.now()+'-'+Math.random().toString(36).slice(2,10);
+    const ref=firebase.database().ref('communication-topic-assignment');
+    ref.transaction(state=>{
+      state=state||{next:0,assignments:{}};
+      state.assignments=state.assignments||{};
+      if(state.assignments[assignmentId]) return state;
+      const next=Number(state.next)||0, topicNumber=(next%TOPICS.length)+1;
+      state.next=next+1;
+      state.assignments[assignmentId]={topicNumber,topicTitle:TOPICS[topicNumber-1],assignedAt:new Date().toISOString()};
+      return state;
+    },(err,committed,snapshot)=>{
+      if(err||!committed){ showError(err); return; }
+      const assignment=snapshot.val().assignments[assignmentId];
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(assignment));
+      showAssignment(assignment);
+    },false);
+  }catch(err){ showError(err); }
+}
+function showError(err){
+  document.getElementById('error').style.display='block';
+  const button=document.getElementById('assign'); button.disabled=false; button.textContent='Try again →';
+  console.error(err);
+}
+(function restoreAssignment(){
+  try{ const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)); if(saved&&saved.topicNumber&&saved.topicTitle) showAssignment(saved); }catch(err){}
+})();
+</script>
+</body>
+</html>
