@@ -94,7 +94,9 @@ function assignTopic(){
   }catch(err){ showError(err); }
 }
 function showError(err){
-  document.getElementById('error').style.display='block';
+  const error=document.getElementById('error');
+  error.textContent='We could not assign a topic yet. Check the connection and try again.';
+  error.style.display='block';
   const button=document.getElementById('assign'); button.disabled=false; button.textContent='Try again →';
   console.error(err);
 }
